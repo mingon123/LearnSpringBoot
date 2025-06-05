@@ -36,7 +36,7 @@ logging: #로그 지정
 server:
   port: 8000
   servlet:
-    #context-path: #입력하면 해당 링크로 접속할 수 있지만 실행시 링크를 매번 입력해야 하기 때문에 여기서는 생략
+    #context-path: /mybatis #입력하면 해당 링크로 접속할 수 있지만 실행시 링크를 매번 입력해야 하기 때문에 여기서는 생략
     encoding:
       charset: UTF-8
       enabled: true #http 인코딩 지원을 활성화할지 여부

@@ -19,8 +19,7 @@ public class BoardServiceImpl implements BoardService{
 	
 	@Override
 	public void insertBoard(BoardVO board) {
-		// TODO Auto-generated method stub
-		
+		boardMapper.insertBoard(board);
 	}
 
 	@Override
@@ -35,20 +34,17 @@ public class BoardServiceImpl implements BoardService{
 
 	@Override
 	public BoardVO getBoard(Long num) {
-		// TODO Auto-generated method stub
-		return null;
+		return boardMapper.getBoard(num);
 	}
 
 	@Override
 	public void updateBoard(BoardVO board) {
-		// TODO Auto-generated method stub
-		
+		boardMapper.updateBoard(board);
 	}
 
 	@Override
 	public void deleteBoard(Long num) {
-		// TODO Auto-generated method stub
-		
+		boardMapper.deleteBoard(num);
 	}
 	
 }
