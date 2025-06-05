@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>글쓰기</title>
+<link rel="stylesheet" th:href="@{/css/style.css}" type="text/css">
+</head>
+<body>
+<div class="page-main">
+	<h2>글쓰기</h2>
+	<form action="insert.do" method="post">
+		<ul>
+			<li>
+				<label for="writer">작성자</label>
+				<!--/*
+				th:field는 폼(form) 입력 필드에 값을 자동으로 바인딩.
+				주로 Spring MVC에서 @ModelAttribute로 바인딩되는 객체의 필드와 연결
+				*/-->
+				<input type="text" name="writer" id="writer" th:field="${boardVO.writer}">
+				<span th:if="${#fields.hasErrors('boardVO.writer')}" th:errors="*{boardVO.writer}" class="error-color"></span><!--/* errors를 입력할 수 없기 때문에 직접 입력, #fields는 태그들 안에서 writer 태그를 읽어서 에러 확인, 에러문구는 *로 읽어옴 */-->
+			</li>
+			<li>
+				<label for="title">제목</label>
+				<input type="text" name="title" id="title" th:field="${boardVO.title}">
+				<span th:if="${#fields.hasErrors('boardVO.title')}" th:errors="*{boardVO.title}" class="error-color"></span>
+			</li>
+			<li>
+				<label for="passwd">비밀번호</label>
+				<input type="password" name="passwd" id="passwd"><!--/* 비밀번호는 매핑될 필요없음(보여주는 필드가 아니기 때문에 필드 제거 */-->
+				<span th:if="${#fields.hasErrors('boardVO.passwd')}" th:errors="*{boardVO.passwd}" class="error-color"></span>
+			</li>
+			<li>
+				<label for="content">내용</label>
+				<textarea rows="5" cols="30" name="content" id="content" th:field="${boardVO.content}"></textarea>
+				<span th:if="${#fields.hasErrors('boardVO.content')}" th:errors="*{boardVO.content}" class="error-color"></span>
+			</li>
+		</ul>
+		<div class="align-center">
+			<input type="submit" value="등록">
+			<input type="button" value="목록" onclick="location.href='list.do'">
+		</div>
+	</form>
+</div>
+</body>
+</html>

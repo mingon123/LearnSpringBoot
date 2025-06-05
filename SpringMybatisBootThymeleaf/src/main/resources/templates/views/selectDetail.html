@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>글상세</title>
+<link rel="stylesheet" th:href="@{/css/style.css}" type="text/css">
+</head>
+<body>
+<div class="page-main">
+	<h2 th:text="${board.title}"></h2>
+	<p>
+		<span th:text="'글번호 : ' + ${board.num}"></span><br><!--/* ''로 문자열 입력 */-->
+		<span th:text="'작성자 : ' + ${board.writer}"></span><br>
+		<span>작성일 : [[${board.reg_date}]]</span><!--/* 그냥 값에 입력 : [[]]에 입력 - 위처럼 속성형태로 입력하는 것이 좋음 */-->
+	</p>
+	<hr width="100%" size="1" noshade>
+	<p th:text="${board.content}"></p>
+	<div class="align-center">
+		<input type="button" value="수정" th:onclick="|location.href='@{update.do(num=${board.num})}'|"><!--/* 인라인 방식으로 할 경우는 onclick은 href처럼 변경 후 |(파이프)를 앞뒤에 붙여서 사용 */-->
+		<input type="button" value="삭제" th:onclick="|location.href='@{delete.do(num=${board.num})}'|">
+		<input type="button" value="목록" onclick="location.href='list.do'"><!--/* 값을 전달하지 않는 경우는 기존처럼 사용 */-->
+	</div>
+</div>
+</body>
+</html>

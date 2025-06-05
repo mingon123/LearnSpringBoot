@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>글수정</title>
+<link rel="stylesheet" th:href="@{/css/style.css}" type="text/css">
+</head>
+<body>
+<div class="page-main">
+	<h2>글수정</h2>
+	<!--/*
+	th:object 이용. th:object을 이용해서 객체를 
+	th:object="${boardVO}" 지정하면 
+	th:field에서는 th:field="*{writer}" 로 바로 접근 가능
+	*/-->
+	<form action="update.do" method="post" th:object="${boardVO}">
+		<input type="hidden" name="num" th:field="*{num}">
+		<ul>
+			<li>
+				<label for="writer">작성자</label>
+				<input type="text" name="writer" id="writer" th:field="*{writer}">
+				<span th:if="${#fields.hasErrors('writer')}" th:errors="*{writer}" class="error-color"></span>
+			<li>
+			<li>
+				<label for="title">제목</label>
+				<input type="text" name="title" id="title" th:field="*{title}">
+				<span th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="error-color"></span>
+			</li>
+			<li>
+				<label for="passwd">비밀번호</label>
+				<input type="password" name="passwd" id="passwd">
+				<span th:if="${#fields.hasErrors('passwd')}" th:errors="*{passwd}" class="error-color"></span>
+			</li>
+			<li>
+				<label for="content">내용</label>
+				<textarea rows="5" cols="30" name="content" id="content" th:field="*{content}"></textarea>
+				<span th:if="${#fields.hasErrors('content')}" th:errors="*{content}" class="error-color"></span>
+			</li>
+		</ul>
+		<div class="align-center">
+			<input type="submit" value="수정">
+			<input type="button" value="목록" onclick="location.href='list.do'">
+		</div>
+	</form>
+</div>
+</body>
+</html>

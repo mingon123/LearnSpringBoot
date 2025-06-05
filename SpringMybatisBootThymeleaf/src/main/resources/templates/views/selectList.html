@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>게시판 목록</title>
+<!--/* @{}는 URL 경로(URL path) 생성 */-->
+<link rel="stylesheet" th:href="@{/css/style.css}" type="text/css"><!--/* 경로가 같은 경우 파일명만 입력하면 되지만, 다른 경우 @{}로 묶어서 처리 */-->
+</head>
+<body>
+<div class="page-main">
+	<h2>게시판 목록</h2>
+	<div class="align-right">
+		<input type="button" value="글쓰기" onclick="location.href='insert.do'">
+	</div>
+	<div class="result-display" th:if="${count == 0}">표시할 내용이 없습니다.</div><!--/* 동적으로 하는 태그 자체에 입력 */-->
+	<div th:unless="${count == 0}"><!--/* 반대의 경우 unless 사용 */-->
+		<table>
+			<tr>
+				<th>번호</th>
+				<th>제목</th>
+				<th>작성자</th>
+				<th>작성일</th>
+			</tr>
+					<!--/* 변수, 상태변수 : 컬렉션 */-->
+			<tr th:each="board,userStat : ${list}"><!--/* list를 루프돌면서 board로 읽어들임, 상태변수는 생략 가능 */-->
+				<!--/* HTML 태그 불허 */-->
+				<td th:text="${board.num}"></td><!--/* 데이터 명시도 text 사용하여 태그 안에 명시 - text:HTML 불인정 */-->
+				<td><a th:href="@{detail.do(num=${board.num})}" th:text="${board.title}"></a></td><!--/* 주소(링크) 연결 시 th: 붙이기 + ?로 넘기지 못하고 ()로 묶기, @{}로 한번 더 묶어서 처리해야 함. */-->
+				<td th:text="${board.writer}"></td>
+				<td th:text="${board.reg_date}"></td>
+			</tr>
+		</table>
+		<!--/*
+		상태변수 정리
+		index : 0부터 시작, th:text="${userStat.index}"
+		count : 1부터 시작, th:text="${userStat.count}"
+		size : 전체 사이즈, th:text="${userStat.size}"
+		even : 짝수 여부(boolean), th:text="${userStat.even}"
+		odd : 홀수 여부(boolean), th:text="${userStat.odd}"
+		first : 처음 여부(boolean), th:text="${userStat.first}"
+		last : 끝 여부(boolean), th:text="${userStat.last}"
+		current : 현재 객체, th:text="${userStat.current}"		
+		*/-->
+							<!--/* HTML 태그 허용 */-->
+		<div class="align-center" th:utext="${page}"></div><!--/* utext:HTML 인정 */-->
+	</div>
+</div>
+</body>
+</html>
