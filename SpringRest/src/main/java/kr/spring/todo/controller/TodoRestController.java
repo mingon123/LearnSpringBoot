@@ -1,10 +1,17 @@
 package kr.spring.todo.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import kr.spring.todo.service.TodoService;
+import kr.spring.todo.vo.TodoVO;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
@@ -34,8 +41,18 @@ public class TodoRestController {
 	@Autowired
 	private TodoService todoService;
 	
-	// 할 일 등록 
-	
+	// 할 일 등록
+	// @RequestBody를 이용해서 JSON 데이터를 VO 타입으로 변환하도록 지정
+	public ResponseEntity<Map<String,String>> write(@RequestBody TodoVO todoVO){
+		log.debug("<<할 일 등록>> : " + todoVO);
+		
+		Map<String, String> mapAjax = new HashMap<String, String>();
+		// 할 일 등록
+		todoService.insertTodo(todoVO.getTodo());
+		mapAjax.put("result", "success");
+		
+		return new ResponseEntity<Map<String,String>>(mapAjax,HttpStatus.OK);
+	}
 	
 	
 }
