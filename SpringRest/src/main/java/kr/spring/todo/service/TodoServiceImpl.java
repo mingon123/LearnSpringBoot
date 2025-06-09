@@ -18,8 +18,7 @@ public class TodoServiceImpl implements TodoService{
 	
 	@Override
 	public List<TodoVO> selectList() {
-		// TODO Auto-generated method stub
-		return null;
+		return todoMapper.selectList();
 	}
 
 	@Override
@@ -29,14 +28,12 @@ public class TodoServiceImpl implements TodoService{
 
 	@Override
 	public void updateTodo(TodoVO vo) {
-		// TODO Auto-generated method stub
-		
+		todoMapper.updateTodo(vo);
 	}
 
 	@Override
 	public void deleteTodo(Long id) {
-		// TODO Auto-generated method stub
-		
+		todoMapper.deleteTodo(id);
 	}
 
 }

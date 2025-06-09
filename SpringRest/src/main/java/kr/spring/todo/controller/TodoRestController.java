@@ -1,11 +1,18 @@
 package kr.spring.todo.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -43,7 +50,8 @@ public class TodoRestController {
 	
 	// 할 일 등록
 	// @RequestBody를 이용해서 JSON 데이터를 VO 타입으로 변환하도록 지정
-	public ResponseEntity<Map<String,String>> write(@RequestBody TodoVO todoVO){
+	@PostMapping("/write")
+	public ResponseEntity<Map<String,String>> write(@RequestBody TodoVO todoVO){ // ResponseEntity : 데이터도 JSON 형식으로 보내지만, 상태정보도 함께 보냄(지금은 OK), 실패도 처리할 수 있음. todo.list.js에서 data 부분이 바뀜(JSON 형식으로 보내기 때문)
 		log.debug("<<할 일 등록>> : " + todoVO);
 		
 		Map<String, String> mapAjax = new HashMap<String, String>();
@@ -54,5 +62,47 @@ public class TodoRestController {
 		return new ResponseEntity<Map<String,String>>(mapAjax,HttpStatus.OK);
 	}
 	
+	// 할 일 목록
+	@GetMapping("/list")
+	public ResponseEntity<List<TodoVO>> getList(){ // count 없기 때문에 map으로 안보내고 list로 보냄
+		
+		List<TodoVO> list = todoService.selectList();
+		
+		return new ResponseEntity<List<TodoVO>>(list,HttpStatus.OK);
+	}
 	
+	// 할 일 수정
+	@PutMapping("/update")
+	public ResponseEntity<Map<String, String>> modify(@RequestBody TodoVO todoVO){ // @RequestBody json 문자열을 VO로 변경해줌
+		log.debug("<<할 일 수정>> : " + todoVO);
+		
+		Map<String, String> mapAjax = new HashMap<String, String>();
+		
+		todoService.updateTodo(todoVO);		
+		
+		mapAjax.put("result", "success");
+		
+		return new ResponseEntity<Map<String,String>>(mapAjax,HttpStatus.OK);
+	}
+	
+	/*
+	{id}는 값이 변수임을 나타냄
+	@PathVariable은 URL의 변수 값이 변수 id에 바인딩 되도록 함
+	id 이외에 추가적인 변수가 있다면 아래와 같이 명시 가능
+	url은 /delete/id/{id}/name/{name} or /delete/{id}/{name}의 구성
+	*/
+	
+	// 할 일 삭제
+	@DeleteMapping("/delete/{id}")
+	public ResponseEntity<Map<String, String>> delete(@PathVariable long id){ // id를 읽어서 {id}에 집어넣음 - @PathVariable : 경로상의 값
+		log.debug("<<id>> : " + id);
+		
+		todoService.deleteTodo(id);
+		
+		Map<String, String> mapAjax = new HashMap<String, String>();
+		
+		mapAjax.put("result", "success");
+		
+		return new ResponseEntity<Map<String,String>>(mapAjax,HttpStatus.OK);
+	}
 }

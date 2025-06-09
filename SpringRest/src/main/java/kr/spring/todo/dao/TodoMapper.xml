@@ -3,22 +3,13 @@
     PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
 <mapper namespace="kr.spring.todo.dao.TodoMapper">	
-	<!-- 목록 -->
-<!-- 	<select id="getTodoList" parameterType="map" resultType="TodoVO">어노테이션 방식에서 id는 메서드명으로만 해야 함
-		SELECT
-			*
-		FROM (SELECT
-				a.*,
-				rownum rnum
-			FROM(SELECT
-					*
-				FROM stodo
-				ORDER BY num DESC)a)
-		<![CDATA[
-		WHERE rnum >= #{start} AND rnum <= #{end}
-		]]>
-	</select> -->
-
+	<update id="updateTodo" parameterType="todoVO">
+		UPDATE stodo
+		SET
+		<if test="completed == 0">completed=1</if><!-- 토글 형태로 서로 반대로 바뀌도록 처리 -->
+		<if test="completed == 1">completed=0</if>
+		WHERE id=#{id}
+	</update>
 </mapper>
 
 
