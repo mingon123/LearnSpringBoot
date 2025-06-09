@@ -1,0 +1,11 @@
+package kr.spring.form;
+
+import lombok.Data;
+
+@Data
+public class LoginForm {
+	// 사용자명
+	private String usernameInput;
+	// 비밀번호
+	private String passwordInput;
+}
