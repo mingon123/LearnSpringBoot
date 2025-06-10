@@ -2,3 +2,4 @@ dataconfig:
   db-url: jdbc:oracle:thin:@localhost:1521:xe
   db-username: user01
   db-password: 1234
+  rememberme-key: hayden

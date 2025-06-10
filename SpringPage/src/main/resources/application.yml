@@ -3,7 +3,7 @@ spring:
     import: data-config.yml
 
   thymeleaf:
-    prefix: classpath:templates/views/
+    prefix: classpath:templates/
     suffix: .html
     check-template-location: true
     mode: HTML5
