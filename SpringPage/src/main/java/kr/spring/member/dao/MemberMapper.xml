@@ -24,6 +24,22 @@
 			#{address1},
 			#{address2})
 	</insert>
+	
+	<!-- 아이디 및 닉네임 중복 체크 -->
+	<select id="selectIdAndNickName" parameterType="map" resultType="memberVO">
+		SELECT
+			*
+		FROM spmember
+		WHERE
+		<if test="id != null and id != ''">
+			id = #{id}
+		</if>
+		<if test="nick_name != null and nick_name !=''">
+			nick_name = #{nick_name}
+		</if>
+		
+			
+	</select>
 </mapper>
 
 

@@ -2,7 +2,7 @@
 create table spmember(
  mem_num number not null,
  id varchar2(16) unique not null,
- nick_name varchar2(30) unique not null,
+ nick_name varchar2(30) unique,
  authority varchar2(30) default 'ROLE_USER' not null,
  constraint spmember_pk primary key (mem_num)
 );

@@ -5,6 +5,10 @@ import java.sql.Date;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -14,20 +18,33 @@ import lombok.ToString;
 @ToString(exclude = {"photo"}) // 제외할 데이터는 exclude = {배열형식}으로 입력
 public class MemberVO {
 	private long mem_num;
+	@Pattern(regexp="^[A-Za-z0-9]{4,14}$")
 	private String id;
 	private String nick_name;
 	private String authority;
+	@NotBlank
 	private String name;
+	@Pattern(regexp="^[A-Za-z0-9]{4,12}$")
 	private String passwd;
+	@NotBlank
 	private String phone;
+	@Email
+	@NotBlank
 	private String email;
+	@Size(min=5,max=5)
 	private String zipcode;
+	@NotBlank
 	private String address1;
+	@NotBlank
 	private String address2;
 	private byte[] photo;
 	private String photo_name;
 	private Date reg_date;
 	private Date modify_date;
+	
+	// 비밀번호 변경시 현재 비밀번호를 저장하는 용도로 사용
+	@Pattern(regexp="^[A-Za-z0-9]{4,12}$")
+	private String noew_passwd;
 	
 	// 비밀번호 일치 여부 체크
 	public boolean isCheckedPassword(String userPasswd) {

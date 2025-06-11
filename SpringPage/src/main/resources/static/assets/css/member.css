@@ -1,0 +1,44 @@
+@charset "UTF-8";
+
+/* 회원 등록, 수정, 삭제 폼
+---------------------------*/
+#member_register{
+	width: 800px;
+}
+#member_register ul,#member_modify ul{
+	padding-left: 120px;
+}
+#member_register input[id="id"]{
+	width: 283px;
+}
+#member_register input[id="zipcode"],#member_modify input[id="zipcode"]{
+	width: 254px;
+}
+#member_register select,#member_modify select{
+	width: 364px;
+}
+#member_modify{
+	width: 96%;
+}
+#member_delete input[id="id"],#member_delete input[id="passwd"]{
+	width: 240px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
