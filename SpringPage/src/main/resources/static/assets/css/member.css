@@ -24,10 +24,49 @@
 	width: 240px;
 }
 
+/* 로그인
+--------------------------------*/
+#member_login{
+	width:300px;
+	margin:0 auto;
+	padding:0;
+	border:none;
+}
+#member_login ul{
+	margin-top:0;
+	padding:0;
+}
+.floating-label {/*floating label 설정*/
+  position: relative;
+}
+.floating-label > .form-input{
+  width:300px;	
+  height: 32px;
+  padding: 0.55rem 0.55rem;
 
-
-
-
+}
+.floating-label > label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 1.25rem 0.65rem;
+  transition: all 0.25s;
+}
+.floating-label > .form-input::placeholder{
+  color: transparent;
+}
+.floating-label > .form-input:focus, .floating-label > .form-input:not(:placeholder-shown){
+  padding-top: 1.125rem;
+  padding-bottom: 0.125rem;
+}
+.floating-label > .form-input:focus + label,
+.floating-label > .form-input:not(:placeholder-shown) + label{/*선택자A+선택자B : 선택자A 바로 뒤에 위치하는 선택자B만 선택*/
+  opacity: 0.65;
+  transform: scale(0.85) translateY(-0.5rem) translateX(-0.5rem);
+}
+#member_login .login-btn{
+	width: 320px;
+}
 
 
 

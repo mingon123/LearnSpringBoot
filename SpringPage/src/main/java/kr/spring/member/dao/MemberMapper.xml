@@ -37,9 +37,22 @@
 		<if test="nick_name != null and nick_name !=''">
 			nick_name = #{nick_name}
 		</if>
-		
-			
 	</select>
+		
+	<!-- 로그인 처리 -->
+	<select id="selectCheckMember" parameterType="string" resultType="memberVO">
+		SELECT
+			mem_num,
+			id,
+			authority,
+			nick_name,
+			passwd,
+			email
+		FROM spmember JOIN spmember_detail
+		USING (mem_num)
+		WHERE id=#{id}
+	</select>
+			
 </mapper>
 
 

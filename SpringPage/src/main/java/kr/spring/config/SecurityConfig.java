@@ -89,6 +89,15 @@ public class SecurityConfig {
 					.invalidateHttpSession(true)
 					// 로그아웃시 쿠키를 삭제
 					.deleteCookies("JSESSIONID"))
+			/*
+			.exceptionHandling(error -> error
+					.accessDeniedHandler((request,response,ex) -> {
+						log.error("<<예외 발생>> : " + ex.toString());
+						log.debug("<<예외 발생 페이지>> : " + request.getRequestURI());
+						log.debug("<<x-csrf-token>> : " + request.getHeader("x-csrf-token")); // 토큰이 있는지 확인
+					})
+			)
+			*/
 			// 자동로그인 기능
 			.rememberMe(me -> me
 					.key(rememberme_key) // 쿠키에 사용되는 값을 암호화하기 위한 키(key) 값
@@ -98,7 +107,7 @@ public class SecurityConfig {
 			// CSRF(Cross-Site Request Forgery)는 인증된 사용자의 권한을 악용하여
 			// 사용자가 의도하지 않은 요청을 웹 서버에 보내게 하는 공격
 			// GET방식을 제외한 상태를 변경하는 요청(POST,PUT,DELETE,PATCH)일 경우 CSRF 검사
-			.csrf(csrf -> csrf.disable()) // 나중엔 보안에 취약해져서 CSRF 사용함(지금만 disable)
+//			.csrf(csrf -> csrf.disable()) // CSRF 보호 기능을 비활성화.  나중엔 보안에 취약해져서 CSRF 사용함(지금만 disable)
 			.build();
 	}
 	

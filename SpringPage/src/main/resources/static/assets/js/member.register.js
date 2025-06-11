@@ -99,6 +99,35 @@ $(function(){
 			$('#nick_name').css('width',350);
 			$('#message_nick').text('');
 		}
-	});
+	}); // end of keyup
+	
+	// 아이디, 별명 중복 안내 메시지 초기화 및 아이디, 별명 중복 값 초기화
+	$('#id,#nick_name').keydown(function(){
+		if($(this).attr('id') == 'id'){ // 아이디
+			checkId = 0;
+			$('#message_id').text('');
+		}else{ // 별명
+			checkNick = 0;	
+			$('#message_nick').text('');
+		}
+	}); // end of keydown
+	
+	// submit 이벤트 발생시 아이디, 별명 중복 체크 여부 확인
+	$('#member_register').submit(function(){
+		// 아이디 중복체크 필수
+		if(checkId==0){
+			$('#message_id').css('color','red').text('아이디 중복체크 필수');
+			if($('#id').val().trim()==''){
+				$('#id').val('').focus();
+			}
+			return false;
+		}
+		// 별명 중복체크 선택
+		if($('#nick_name').val()!='' && checkNick == 0){ // 입력은 했는데 중복체크는 안함
+			$('#message_nick').css('color','red').html('<div class="form-notice">별명 중복체크 필수,별명을 사용하지 않을 경우 별명을 지우고 전송하세요</div>')
+			return false;
+		}
+	}); // end of submit
+	
 	
 });
