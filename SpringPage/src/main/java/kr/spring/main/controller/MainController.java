@@ -18,4 +18,9 @@ public class MainController {
 	public String main(Model model) {
 		return "views/main/main";
 	}
+	
+	@GetMapping("/accessDenied")
+	public String access() {
+		return "views/common/accessDenied";
+	}
 }

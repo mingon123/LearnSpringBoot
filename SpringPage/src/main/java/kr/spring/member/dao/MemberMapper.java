@@ -5,6 +5,7 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import kr.spring.member.vo.MemberVO;
 
@@ -18,7 +19,9 @@ public interface MemberMapper {
 	public void insertMemberDetail(MemberVO member);
 	public MemberVO selectIdAndNickName(Map<String, String> map);
 	public MemberVO selectCheckMember(String id);
+	@Select("SELECT * FROM spmember JOIN spmember_detail USING(mem_num) WHERE mem_num=#{mem_num}")
 	public MemberVO selectMember(Long mem_num);
+	@Update("UPDATE spmember SET nick_name=#{nick_name} WHERE mem_num=#{mem_num}")
 	public void updateMember(MemberVO member);
 	public void updateMemberDetail(MemberVO member);
 	public void updatePassword(MemberVO member);

@@ -46,6 +46,12 @@ public class MemberVO {
 	@Pattern(regexp="^[A-Za-z0-9]{4,12}$")
 	private String noew_passwd;
 	
+	// 별명이 미등록되 있으면 id 반환, 별명이 등록되어 있으면 별명 반환
+	public String getUserName() {
+		if(nick_name==null) return id;
+		return nick_name;
+	}
+	
 	// 비밀번호 일치 여부 체크
 	public boolean isCheckedPassword(String userPasswd) {
 		if(getAuthorityOrdinal() > 1 && passwd.equals(userPasswd)) {

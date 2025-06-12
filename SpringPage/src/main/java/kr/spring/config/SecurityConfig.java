@@ -19,6 +19,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 
+import kr.spring.member.security.CustomAccessDeniedHandler;
 import kr.spring.member.security.UserSecurityService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -58,6 +59,9 @@ public class SecurityConfig {
 	@Autowired
 	private AuthenticationFailureHandler authenticationFailureHandler;
 	
+	@Autowired
+	private CustomAccessDeniedHandler customAccessDeniedHandler;
+	
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{		
 		// HTTP 요청에 대한 보안 설정
@@ -89,15 +93,9 @@ public class SecurityConfig {
 					.invalidateHttpSession(true)
 					// 로그아웃시 쿠키를 삭제
 					.deleteCookies("JSESSIONID"))
-			/*
 			.exceptionHandling(error -> error
-					.accessDeniedHandler((request,response,ex) -> {
-						log.error("<<예외 발생>> : " + ex.toString());
-						log.debug("<<예외 발생 페이지>> : " + request.getRequestURI());
-						log.debug("<<x-csrf-token>> : " + request.getHeader("x-csrf-token")); // 토큰이 있는지 확인
-					})
+					.accessDeniedHandler(customAccessDeniedHandler)
 			)
-			*/
 			// 자동로그인 기능
 			.rememberMe(me -> me
 					.key(rememberme_key) // 쿠키에 사용되는 값을 암호화하기 위한 키(key) 값

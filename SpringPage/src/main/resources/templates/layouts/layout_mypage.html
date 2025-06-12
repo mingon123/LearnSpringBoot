@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+<meta charset="UTF-8">
+<title layout:title-pattern="$LAYOUT_TITLE > $CONTENT_TITLE">SpringPage</title><!--/* 전체 레이아웃의 타이틀 먼저 보여주고 content_title을 이후에 보여줌 */-->
+<link rel="stylesheet" th:href="@{/assets/css/common.css}" type="text/css">
+<link rel="stylesheet" th:href="@{/assets/css/member.css}" type="text/css">
+<script type="text/javascript" th:src="@{/assets/js/jquery-3.7.1.min.js}"></script>
+<script type="text/javascript" th:src="@{/assets/js/customjs.js}"></script>
+<script type="text/javascript" th:src="@{/assets/js/member.profile.js}"></script>
+</head>
+<body>
+<div id="main">
+	<!-- header 시작 -->
+	<div id="main_header" th:insert="fragments/header::header"></div><!-- 경로/파일명::식별자명 -->
+	<!-- header 끝 -->
+	<div class="side-height">
+		<!-- MY페이지 네이게이션 시작 -->
+		<div id="page_nav" th:insert="fragments/nav_mypage::nav_mypage"></div>
+		<!-- MY페이지 네이게이션 끝 -->
+		<!-- 중앙 켄텐츠 시작 -->
+		<div id="page_body" layout:fragment="content"></div>
+		<!-- 중앙 컨텐츠 끝 -->
+	</div>
+	<!-- footer 시작 -->
+	<div id="main_footer" class="page-clear" th:insert="fragments/footer::footer"></div>
+	<!-- footer 끝 -->
+</div>
+</body>
+</html>

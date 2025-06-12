@@ -95,11 +95,23 @@ $(function(){
 			
 		}else{
 			// 별명을 입력하지 않은 경우
-			$('#confirm_nick').hide();
-			$('#nick_name').css('width',350);
-			$('#message_nick').text('');
+			initNickName();
 		}
 	}); // end of keyup
+	
+	// 별명창이 포커스를 잃어버렸을 경우
+	$('#nick_name').blur(function(){
+		if($('#nick_name').val().length == 0){
+			initNickName();
+		}
+	}); // end of blur
+	
+	// 별명을 입력하지 않은 경우
+	function initNickName(){
+		$('#confirm_nick').hide();
+		$('#nick_name').css('width',350);
+		$('#message_nick').text('');
+	}
 	
 	// 아이디, 별명 중복 안내 메시지 초기화 및 아이디, 별명 중복 값 초기화
 	$('#id,#nick_name').keydown(function(){

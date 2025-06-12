@@ -52,7 +52,21 @@
 		USING (mem_num)
 		WHERE id=#{id}
 	</select>
-			
+	
+	<!-- 회원정보수정 -->
+	<update id="updateMemberDetail" parameterType="memberVO">
+		UPDATE spmember_detail
+		SET
+			name=#{name},
+			phone=#{phone},
+			email=#{email},
+			zipcode=#{zipcode},
+			address1=#{address1},
+			address2=#{address2},
+			modify_date=SYSDATE
+		WHERE mem_num=#{mem_num}
+	</update>
+	
 </mapper>
 
 
