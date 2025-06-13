@@ -32,6 +32,11 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler{
 		log.error("<<예외 발생>> : {}", accessDeniedException.toString());
 		
 		if(accessDeniedException instanceof InvalidCsrfTokenException | accessDeniedException instanceof MissingCsrfTokenException) {
+			if(request.getRequestURI().equals("/member/logout")) {
+				response.sendRedirect("/main/main");
+				return;
+			}
+			
 			FlashMap flashMap = new FlashMap();
 			flashMap.put("accessMsg", "CSRF TOKEN 미사용 또는 오류");
 			FlashMapManager flashMapManager = new SessionFlashMapManager();

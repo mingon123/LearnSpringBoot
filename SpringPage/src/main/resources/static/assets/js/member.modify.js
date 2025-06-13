@@ -15,7 +15,7 @@ $(function(){
 			initNickName();
 		}else if($('#nick_name').val().length > 0){
 			$('#confirm_nick').show();
-			$('#nick_name').css('width',283);
+			$('#nick_name').css('width',254);
 		}else{
 			initNickName();
 		}
@@ -34,6 +34,11 @@ $(function(){
 		$('#message_nick').text('');
 	}
 	
+	// 별명 중복 안내 메시지 초기화 및 아이디 중복 값 초기화
+	$('#nick_name').keydown(function(){
+		checkNick = 0;
+		$('#message_nick').text('');
+	}); // end of keydown
 	
 	// 별명 중복체크
 	$('#confirm_nick').click(function(){

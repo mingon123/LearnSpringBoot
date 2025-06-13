@@ -1,5 +1,6 @@
 package kr.spring.member.dao;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.annotations.Insert;
@@ -32,6 +33,12 @@ public interface MemberMapper {
 	// 비밀번호 찾기
 	public void updateRandomPassword(MemberVO member);
 	// 프로필 이미지 업데이트
+	@Update("UPDATE spmember_detail SET photo=#{photo},photo_name=#{photo_name} WHERE mem_num=#{mem_num}")
 	public void updateProfile(MemberVO member);
+	
+	// 회원관리 - 관리자
+	public Integer selectRowCount(Map<String, Object> map);
+	public List<MemberVO> selectList(Map<String, Object> map);
+	public void updateByAdmin(MemberVO memberVO);
 	
 }

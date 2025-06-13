@@ -67,6 +67,60 @@
 		WHERE mem_num=#{mem_num}
 	</update>
 	
+	<!-- 회원목록 처리 -->
+	<!-- sql 태그와 include 태그를 이용해서 SQL문을 재사용 -->
+	<sql id="memberSearch">
+		<where>
+			<if test="keyword != null and keyword != ''">
+				<if test="keyfield==1">
+					m.id LIKE '%' || #{keyword} ||'%' OR
+					m.nick_name LIKE '%' || #{keyword} || '%'
+				</if>
+				<if test="keyfield==2">
+					d.name LIKE '%' || #{keyword} ||'%'
+				</if>
+				<if test="keyfield==3">
+					d.email LIKE '%' || #{keyword} ||'%'
+				</if>
+				<if test="keyfield==4">
+					m.id LIKE '%' || #{keyword} ||'%' OR
+					m.nick_name LIKE '%' || #{keyword} ||'%' OR
+					d.name LIKE '%' || #{keyword} ||'%' OR
+					d.email LIKE '%' || #{keyword} ||'%'
+				</if>
+			</if>
+		</where>
+	</sql>
+	
+	<!-- 전체/검색 레코드수 -->
+	<select id="selectRowCount" parameterType="map" resultType="integer">
+		SELECT
+			COUNT(*)
+		FROM spmember m LEFT OUTER JOIN spmember_detail d
+		ON m.mem_num = d.mem_num
+		<include refid="memberSearch"/>
+	</select>
+	
+	<!-- 전체/검색 목록 -->
+	<select id="selectList" parameterType="map" resultType="memberVO">
+		SELECT
+			*
+		FROM (SELECT
+				a.*,
+				rownum rnum
+			  FROM (
+			  	SELECT
+			  		*
+			  	FROM spmember m LEFT OUTER JOIN spmember_detail d
+			  	ON m.mem_num = d.mem_num
+			  	<include refid="memberSearch"/>
+			  	ORDER BY d.reg_date DESC NULLS LAST)a)
+	<![CDATA[
+		WHERE rnum >= #{start} AND rnum <= #{end}
+	]]>
+	</select>
+	
+	
 </mapper>
 
 

@@ -12,7 +12,9 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Getter
 @Setter
 @ToString(exclude = {"photo"}) // 제외할 데이터는 exclude = {배열형식}으로 입력
@@ -44,7 +46,7 @@ public class MemberVO {
 	
 	// 비밀번호 변경시 현재 비밀번호를 저장하는 용도로 사용
 	@Pattern(regexp="^[A-Za-z0-9]{4,12}$")
-	private String noew_passwd;
+	private String now_passwd;
 	
 	// 별명이 미등록되 있으면 id 반환, 별명이 등록되어 있으면 별명 반환
 	public String getUserName() {
@@ -79,6 +81,7 @@ public class MemberVO {
 	
 	// 이미지 BLOB 처리
 	public void setUpload(MultipartFile upload) throws IOException {
+		log.debug("<<파일처리 진입>>");
 		// MultipartFile -> byte[]
 		setPhoto(upload.getBytes());
 		// 파일 이름

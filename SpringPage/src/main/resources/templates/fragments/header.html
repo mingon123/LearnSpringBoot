@@ -15,13 +15,13 @@
 				<a th:href="@{/member/myPage}">MY페이지</a><img th:src="@{/assets/images/mypage.png}" width="20" height="20">
 			</div>
 			<div class="menu-item">
+				<img th:src="@{/member/photoView}" width="20" height="20" class="my-photo">
 				<span class="user-name" th:text="${#authentication.principal.memberVO.userName}"></span>
 			</div>
 			<div class="menu-item">
 				<a href="#" id="logout"><img th:src="@{/assets/images/logout.png}" width="20" height="20">로그아웃</a>
 				<!--/* 폼을 만들고 POST 방식으로 전달해야 스프링 시큐리티가 지원하는 로그아웃 기능 사용 가능 */-->
 				<form th:action="@{/member/logout}" method="post" style="display:none;" id="frm_logout">
-					<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
 				</form>
 				<script type="text/javascript">
 					const logout = document.getElementById('logout');

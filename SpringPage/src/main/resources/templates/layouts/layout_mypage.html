@@ -3,6 +3,8 @@
 	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
 <meta charset="UTF-8">
+<meta name="csrf-header" th:content="${_csrf.headerName}">
+<meta name="csrf-token" th:content="${_csrf.token}">
 <title layout:title-pattern="$LAYOUT_TITLE > $CONTENT_TITLE">SpringPage</title><!--/* 전체 레이아웃의 타이틀 먼저 보여주고 content_title을 이후에 보여줌 */-->
 <link rel="stylesheet" th:href="@{/assets/css/common.css}" type="text/css">
 <link rel="stylesheet" th:href="@{/assets/css/member.css}" type="text/css">

@@ -8,21 +8,30 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
+import kr.spring.member.security.CustomAccessDeniedHandler;
 import kr.spring.member.service.MemberService;
 import kr.spring.member.vo.MemberVO;
+import kr.spring.member.vo.PrincipalDetails;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
 @RequestMapping("/member")
 public class MemberRestController {
+
+    private final CustomAccessDeniedHandler customAccessDeniedHandler;
 	@Autowired
 	private MemberService memberService;
+
+    MemberRestController(CustomAccessDeniedHandler customAccessDeniedHandler) {
+        this.customAccessDeniedHandler = customAccessDeniedHandler;
+    }
 	
 	// 아이디 중복 체크
 	@GetMapping("/confirmId/{id}")
@@ -82,4 +91,19 @@ public class MemberRestController {
 		return new ResponseEntity<Map<String,String>>(mapAjax, HttpStatus.OK);
 	}
 	
+	// 프로필 사진 업로드
+	@PutMapping("/updateMyPhoto")
+	public ResponseEntity<Map<String,String>> updateMyPhoto(MemberVO memberVO, @AuthenticationPrincipal PrincipalDetails principal){
+		log.debug("<<프로필 사진 업로드>> : {}", memberVO);
+		
+		Map<String,String> mapAjax = new HashMap<String, String>();
+		if(principal==null) {
+			mapAjax.put("result", "logout");
+		}else {
+			memberVO.setMem_num(principal.getMemberVO().getMem_num());
+			memberService.updateProfile(memberVO);
+			mapAjax.put("result", "success");
+		}
+		return new ResponseEntity<Map<String,String>>(mapAjax,HttpStatus.OK);
+	}
 }

@@ -91,7 +91,7 @@ $(function(){
 		if($('#nick_name').val().length > 0){
 			// 별명을 입력한 경우
 			$('#confirm_nick').show();
-			$('#nick_name').css('width',283);
+			$('#nick_name').css('width',255);
 			
 		}else{
 			// 별명을 입력하지 않은 경우

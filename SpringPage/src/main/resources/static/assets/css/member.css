@@ -9,10 +9,10 @@
 	padding-left: 120px;
 }
 #member_register input[id="id"]{
-	width: 283px;
+	width: 255px;
 }
 #member_register input[id="zipcode"],#member_modify input[id="zipcode"]{
-	width: 254px;
+	width: 226px;
 }
 #member_register select,#member_modify select{
 	width: 364px;
@@ -68,10 +68,29 @@
 	width: 320px;
 }
 
-
-
-
-
+/* 프로필
+--------------------------------*/
+.photo-area{
+	position: relative;
+}
+.camera{
+	width: 50px;
+	height: 50px;
+	border-radius: 100%;
+	background-color: #d3bb72;
+	position: absolute;
+	top: 130px;
+	left: 150px;
+	border: 2px solid #fff;
+	cursor: pointer;
+	padding: 13px 0 0 10px;
+}
+#photo_choice{
+	text-align: center;
+	position: absolute;
+	top: 150px;
+	left: 75px;
+}
 
 
 
