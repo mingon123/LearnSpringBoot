@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{layouts/layout_basic}">
+<head>
+<meta charset="UTF-8">
+<title>게시판 글쓰기</title>
+<link rel="stylesheet" th:href="@{/assets/css/board.css}">
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote.min.css" rel="stylesheet">
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote.min.js"></script>
+<script type="text/javascript">
+	$(function(){
+		$('#content').summernote({
+			height:300
+		});
+		$('.modal input[type="text"]').css('width',530);
+		
+		// 파일 용량 체크
+		$('#board_register').submit(function(){
+			const fileSize = 1024*1024;
+			const myFile = $('#upload')[0].files[0];
+			if(myFile && myFile.size > fileSize){
+				alert(myFile.size + 'bytes('+fileSize+'bytes까지만 업로드 가능)');
+				return false;
+			}
+		});
+	});
+</script>
+</head>
+<body>
+<div layout:fragment="content" class="page-main">
+	<h2>글쓰기</h2>
+	<form th:action="@{write}" id="board_register" enctype="multipart/form-data" method="post" th:object="${boardVO}">
+		<ul>
+			<li>
+				<label for="category">분류</label>
+				<select th:field="*{category}" th:errorclass="field-error">
+					<option value="" selected>선택하세요</option>
+					<option value="1">자바</option>
+					<option value="2">데이터베이스</option>
+					<option value="3">자바스크립트</option>
+					<option value="4">기타</option>
+				</select>
+				<span th:errors="*{category}" class="error-color"></span>
+			</li>
+			<li>
+				<input type="text" th:field="*{title}" placeholder="제목을 입력하세요" th:errorclass="field-error">
+				<span th:errors="*{title}" class="error-color"></span>
+			</li>
+			<li>
+				<textarea th:field="*{content}" th:errorclass="field-error" style="height:375px;visibility:hidden;"></textarea>
+														<!-- 그 공간을 차지하면서 생성(항상 일정 간격을 유지하도록 처리) -->
+				<span th:errors="*{content}" class="error-color"></span>
+			</li>
+			<li>
+				<label for="upload">파일업로드</label>
+				<input type="file" name="upload" id="upload">
+ 			</li>
+		</ul>
+		<div class="align-center">
+			<input type="submit" class="default-btn" value="전송">
+			<input type="button" class="default-btn" value="목록" onclick="location.href='list'">
+		</div>
+	</form>
+</div>
+</body>
+</html>

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{layouts/layout_basic}">
+<head>
+<meta charset="UTF-8">
+<title>게시판 목록</title>
+<link rel="stylesheet" th:href="@{/assets/css/board.css}">
+<script type="text/javascript" th:src="@{/assets/js/jquery-3.7.1.min.js}"></script>
+<script type="text/javascript" th:src="@{/assets/js/search.js}"></script>
+</head>
+<body>
+<div layout:fragment="content" class="page-main">
+	<h2>게시판 목록</h2>
+	<form action="list" id="search_form" method="get">
+		<div class="align-right">
+			<input sec:authorize="isAuthenticated()" type="button" value="글쓰기" onclick="location.href='write'">
+		</div>
+	</form>
+</div>
+</body>
+</html>

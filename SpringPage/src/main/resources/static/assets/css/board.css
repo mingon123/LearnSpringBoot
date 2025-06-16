@@ -1,0 +1,28 @@
+@charset "UTF-8";
+
+/* 게시판 목록
+-----------------------*/
+form#search_form #order{
+	height: 32px;
+}
+
+/* 게시판 목록
+-----------------------*/
+form#board_register, form#board_modify{
+	padding: 0 0 10px 0;
+	width: 800px;
+	border: none;
+}
+form#board_register ul, form#board_modify ul{
+	padding: 20px;
+}
+form#board_register input[type="text"], form#board_modfy input[type="text"]{
+	width: 759px;
+	margin-bottom: 10px;
+}
+
+
+
+
+
+
