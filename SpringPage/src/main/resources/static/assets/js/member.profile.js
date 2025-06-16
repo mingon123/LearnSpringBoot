@@ -25,7 +25,7 @@ $(function(){
 			dataType:'json',
 			contentType:false, // 파일이 포함되어 있으면 추가
 			processData:false,
-			beforeSend:function(xhr){ // 토큰처리. thymeleaf는 자동설정이 되지만 얘는 안됨
+			beforeSend:function(xhr){ // 토큰처리. thymeleaf는 자동설정이 되지만 put 방식은 csrf 자동처리 안됨
 				xhr.setRequestHeader($('meta[name="csrf-header"]').attr('content'),
 									 $('meta[name="csrf-token"]').attr('content')); // layout_mypage.html에서 설정한 meta 태그에 넣은 값 호출
 			},

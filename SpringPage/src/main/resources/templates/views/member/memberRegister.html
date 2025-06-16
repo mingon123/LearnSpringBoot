@@ -12,7 +12,7 @@
 <body>
 <div layout:fragment="content" class="page-main">
 	<h2>회원가입</h2>
-	<form th:action="@{/member/registerUser}" th:object="${memberVO}" id="member_register" method="post">
+	<form th:action="@{registerUser}" th:object="${memberVO}" id="member_register" method="post">
 		<ul>
 			<li>
 				<label for="id">아이디</label>

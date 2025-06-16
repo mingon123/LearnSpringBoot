@@ -9,9 +9,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import jakarta.servlet.http.HttpServletRequest;
 import kr.spring.member.service.MemberService;
 import kr.spring.member.vo.MemberVO;
 import kr.spring.util.PagingUtil;
@@ -56,8 +58,32 @@ public class MemberAdminController {
 		return "views/member/admin_list";
 	}
 	
+	// 회원권한 수정 폼 호출
+	@GetMapping("/admin_update")
+	public String form(long mem_num, Model model) {
+		MemberVO memberVO = memberService.selectMember(mem_num);
+		
+		model.addAttribute("memberVO", memberVO);
+		
+		return "views/member/admin_modify";
+	}
 	
-	
+	// 회원권한 수정 처리
+	@PostMapping("/admin_update")
+	public String submit(MemberVO memberVO, Model model, HttpServletRequest request) {
+		log.debug("<<회원권한 수정>> : {}", memberVO);
+		
+		// 회원권한 수정
+		memberService.updateByAdmin(memberVO);
+		
+		// View에 표시할 메시지
+		model.addAttribute("accessTitle", "회원권한 수정");
+		model.addAttribute("accessMsg", "회원권한 수정 완료");
+		model.addAttribute("accessUrl", request.getContextPath()+"/member/admin_update?mem_num="+memberVO.getMem_num());
+		model.addAttribute("accessBtn", "이동");
+		
+		return "views/common/resultView";
+	}
 	
 	
 }

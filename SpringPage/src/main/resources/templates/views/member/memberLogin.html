@@ -18,7 +18,7 @@
 	action="login" 경우 수동 생성 + 수동의 경우 아래의 hidden 값 넘겨야 함.
 	<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
 	*/-->
-	<form th:action="@{/member/login}" id="member_login" method="post">
+	<form th:action="@{login}" id="member_login" method="post">
 		
 		<div class="align-center error-invalid error-color" th:if="${error == 'error'}">아이디 또는 비밀번호 불일치</div>
 		<div class="align-center error-invalid error-color" th:if="${error == 'error_suspended'}">정지회원입니다</div>

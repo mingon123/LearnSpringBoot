@@ -10,7 +10,7 @@
 <body>
 <div layout:fragment="content" class="page-main">
 	<h2>회원정보수정</h2>
-	<form th:action="@{/member/updateUser}" th:object="${memberVO}" id="member_modify" method="post">
+	<form th:action="@{updateUser}" th:object="${memberVO}" id="member_modify" method="post">
 		<ul>
 			<li>
 				<label for="name">이름</label>

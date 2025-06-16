@@ -80,8 +80,7 @@ public class MemberServiceImpl implements MemberService{
 
 	@Override
 	public void updateByAdmin(MemberVO memberVO) {
-		// TODO Auto-generated method stub
-		
+		memberMapper.updateByAdmin(memberVO);
 	}
 
 }
