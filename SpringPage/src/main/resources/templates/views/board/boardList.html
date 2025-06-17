@@ -13,11 +13,72 @@
 <body>
 <div layout:fragment="content" class="page-main">
 	<h2>게시판 목록</h2>
+	<div>
+		<a href="list">전체</a> | 
+		<a href="category=1">자바</a> | 
+		<a href="category=2">데이터베이스</a> | 
+		<a href="category=3">자바스크립트</a> | 
+		<a href="category=4">기타</a>
+	</div>
 	<form action="list" id="search_form" method="get">
+		<ul class="search">
+			<li>
+				<select name="keyfield" id="keyfield">
+					<option value="1" th:selected="${keyfield=='1'}">제목</option>
+					<option value="2" th:selected="${keyfield=='2'}">ID+별명</option>
+					<option value="3" th:selected="${keyfield=='3'}">내용</option>
+					<option value="4" th:selected="${keyfield=='4'}">제목+내용</option>
+				</select>
+			</li>
+			<li>
+				<input type="search" name="keyword" id="keyword" th:value="${keyword}">
+			</li>
+			<li>
+				<input type="submit" value="찾기">
+				<input type="button" value="목록" onclick="location.href='list'">
+			</li>
+		</ul>
 		<div class="align-right">
+		<select name="order" id="order" th:value="${order}">
+			<option value="1" th:selected="${order==1}">최신순</option>
+			<option value="2" th:selected="${order==2}">조회수</option>
+			<option value="3" th:selected="${order==3}">좋아요</option>
+			<option value="4" th:selected="${order==4}">댓글수</option>
+		</select>
+		<script type="text/javascript">
+		$(function(){
+			$('#order').change(function(){
+				location.href='list?category=[[${category}]]&keyfield='+$('#keyfield').val()+'&keyword='+$('#keyword').val()+'&order='+$('#order').val();
+			});
+		});
+		</script>
 			<input sec:authorize="isAuthenticated()" type="button" value="글쓰기" onclick="location.href='write'">
 		</div>
 	</form>
+	<div class="result-display" th:if="${count == 0}">표시할 게시물이 없습니다.</div>
+	<th:block th:if="${count>0}">
+	<table class="striped-table">
+		<tr>
+			<th>번호</th>
+			<th>분류</th>
+			<th width="400">제목</th>
+			<th>작성자</th>
+			<th>작성일</th>
+			<th>조회수</th>
+			<th>좋아요수</th>
+		</tr>
+		<tr th:each="board : ${list}">
+			<td class="align-center" th:text="${board.board_num}"></td>
+			<td class="align-center" th:text="${board.categoryName}"></td>
+			<td><a th:href="@{/board/detail(board_num=${board.board_num})}">[[${board.title}]]()</a></td>
+			<td class="align-center" th:text="${board.memberVO.userName}"></td>
+			<td class="align-center" th:text="${board.reg_date}"></td>
+			<td class="align-center" th:text="${board.hit}"></td>
+			<td class="align-center"></td>
+		</tr>
+	</table>
+	<div class="align-center" th:utext="${page}"></div>
+	</th:block>
 </div>
 </body>
 </html>

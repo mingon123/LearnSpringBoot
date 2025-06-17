@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Update;
 
 import kr.spring.board.vo.BoardVO;
 
@@ -14,6 +15,7 @@ public interface BoardMapper {
 	public Integer selectRowCount(Map<String,Object> map);
 	public void insertBoard(BoardVO board);
 	public BoardVO selectBoard(Long board_num);
+	@Update("UPDATE spboard SET hit=hit+1 WHERE board_num=#{board_num}")
 	public void updateHit(Long board_num);
 	public void updateBoard(BoardVO board);
 	public void deleteBoard(Long board_num);

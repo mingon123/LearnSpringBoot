@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{layouts/layout_basic}">
+<head>
+<meta charset="UTF-8">
+<title>게시판 상세</title>
+<link rel="stylesheet" th:href="@{/assets/css/board.css}">
+<script type="text/javascript" th:src="@{/assets/js/jquery-3.7.1.min.js}"></script>
+<script type="text/javascript" th:src="@{/assets/js/customjs.js}"></script>
+<script type="text/javascript" th:src="@{/assets/js/board.reply.js}"></script>
+<script type="text/javascript" th:src="@{/assets/js/board.fav.js}"></script>
+</head>
+<body>
+<div layout:fragment="content" class="page-main">
+	<h2>[[${board.categoryName}]] - [[${board.title}]]</h2>
+	<ul class="detail-info">
+		<li>
+			<img th:src="@{/member/viewProfile(mem_num=${board.mem_num})}" width="40" height="40" class="my-photo">
+		</li>
+		<li>
+			<span th:text="${board.memberVO.userName}"></span>
+			<br>
+			<span th:if="${board.modify_date==null}" th:text="'작성일 : ' + ${board.reg_date}"></span>
+			<span th:if="${board.modify_date!=null}" th:text="'최근 수정일 : ' + ${board.modify_date}"></span>
+			<span th:text="'조회: ' + ${board.hit}"></span>
+		</li>
+	</ul>
+	
+	<ul th:if="${not #strings.isEmpty(board.filename)}">
+		<li>첨부파일 : <a th:href="@{file(board_num=${board.board_num})}" th:utext="${board.filename}"></a></li>
+	</ul>
+	<hr size="1" width="100%">
+	<div class="align-center" 
+		th:if="${not #strings.isEmpty(board.filename) && 
+				(#strings.endsWith(board.filename, '.jpg') ||
+				 #strings.endsWith(board.filename, '.JPG') ||
+				 #strings.endsWith(board.filename, '.jpeg') ||
+				 #strings.endsWith(board.filename, '.JPEG') ||
+				 #strings.endsWith(board.filename, '.gif') ||
+				 #strings.endsWith(board.filename, '.GIF') ||
+				 #strings.endsWith(board.filename, '.png') ||
+				 #strings.endsWith(board.filename, '.PNG')
+				)}">
+		<img th:src="@{/assets/upload/{filename}(filename=${board.filename})}" class="detail-img">
+	</div>
+	<p class="detail-content" th:utext="${board.content}">
+	<div>
+		<!-- 좋아요 -->
+		<img id="output_fav" th:attr="date-num=${board.board_num}" th:src="@{/assets/images/fav01.gif}" width="40">
+		<span id="output_fcount"></span>
+		<!-- 댓글수 -->
+		<span id="output_rcount"></span>
+	</div>
+	<hr size="1" width="100%">
+	<div class="align-right">
+		<th:block sec:authorize="isAuthenticated()" th:if="${#authentication.principal.memberVO.mem_num==board.mem_num}">
+			<input type="button" value="수정" th:onclick="|location.href='update?board_num=${board.board_num}'|">
+			<input type="button" value="삭제" id="delete_btn">
+			<script type="text/javascript">
+				const delete_btn = document.getElementById('delete_btn');
+				delete_btn.onclick=function(){
+					let choice = confirm('삭제하시겠습니까?');
+					if(choice){
+						location.replace('delete?board_num=[[${board.board_num}]]');
+					}
+				}
+			</script>
+		</th:block>
+		<input type="button" value="목록" onclick="location.href='list'">
+	</div>
+</div>
+</body>
+</html>

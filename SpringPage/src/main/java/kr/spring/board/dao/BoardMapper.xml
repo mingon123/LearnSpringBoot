@@ -2,7 +2,12 @@
 <!DOCTYPE mapper   
     PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
-<mapper namespace="kr.spring.board.dao.BoardMapper">	
+<mapper namespace="kr.spring.board.dao.BoardMapper">
+	<resultMap type="boardVO" id="boardMap">
+		<result property="memberVO.id" column="id"/>
+		<result property="memberVO.nick_name" column="nick_name"/>
+	</resultMap>
+	
 	<!-- 게시판 글 등록 -->
 	<insert id="insertBoard" parameterType="boardVO">
 		INSERT INTO spboard(
@@ -22,6 +27,109 @@
 			#{ip},
 			#{mem_num})
 	</insert>
+	
+	<!-- sql 태그와 include 태그를 이용해서 SQL문 재사용 -->
+	<!-- 검색 -->
+	<sql id="boardSearch">
+		<where>
+			<if test="category != null and category != ''">
+				category = #{category}
+			</if>
+			<if test="keyword != null and keyword != ''">
+				<if test="category != null and category != ''">
+					AND
+				</if>
+				<if test="keyfield == 1">
+					title LIKE '%' || #{keyword} || '%'
+				</if>
+				<if test="keyfield == 2">
+					(id LIKE '%' || #{keyword} || '%' OR
+					nick_name LIKE '%' || #{keyword} || '%')
+				</if>
+				<if test="keyfield == 3">
+					content LIKE '%' || #{keyword} || '%'
+				</if>
+				<if test="keyfield == 4">
+					(title LIKE '%' || #{keyword} || '%' OR
+					content LIKE '%' || #{keyword} || '%')
+				</if>
+			</if>
+		</where>
+	</sql>
+	
+	<!-- 정렬 -->
+	<sql id="boardOrder">
+		<if test="order == 1">
+			ORDER BY board_num DESC
+		</if>
+		<if test="order == 2">
+			ORDER BY hit DESC
+		</if>
+<!-- 		<if test="order == 3">
+			ORDER BY fav_cnt DESC NULLS LAST
+		</if>
+		<if test="order == 4">
+			ORDER BY re_cnt DESC NULLS LAST
+		</if> -->
+	</sql>
+	
+	<!-- 게시판 전체/검색 레코드수 -->
+	<select id="selectRowCount" parameterType="map" resultType="integer">
+		SELECT
+			COUNT(*)
+		FROM spboard JOIN spmember USING(mem_num)
+		<include refid="boardSearch"/>
+	</select>
+	
+	<!-- 게시판 전체/검색 목록 -->
+	<select id="selectList" parameterType="map" resultMap="boardMap">
+		SELECT
+			*
+		FROM (SELECT
+				a.*,
+				rownum rnum
+			FROM (SELECT
+					board_num,
+					category,
+					<![CDATA[
+					REPLACE(REPLACE(title,'<','&lt;'),'>','&gt;') title,
+					]]>
+					hit,
+					filename,
+					reg_date,
+					mem_num,
+					id,
+					nick_name
+				FROM spboard
+				JOIN spmember USING(mem_num)
+				<include refid="boardSearch"/>
+				<include refid="boardOrder"/>)a)
+		<![CDATA[
+		WHERE rnum >= #{start} AND rnum <= #{end}
+		]]>
+	</select>
+	
+	<!-- 게시글 상세 -->
+	<select id="selectBoard" parameterType="long" resultMap="boardMap">
+		SELECT *
+		FROM spboard JOIN spmember USING (mem_num)
+		LEFT OUTER JOIN spmember_detail USING (mem_num)
+		WHERE board_num=#{board_num}
+	</select>
+	
+	<!-- 게시판 글 수정 -->
+	<update id="updateBoard" parameterType="boardVO">
+		UPDATE spboard SET
+			<if test="filename != null">
+			filename=#{filename},
+			</if>
+			title=#{title},
+			content=#{content},
+			ip=#{ip},
+			modify_date=SYSDATE
+		WHERE board_num=#{board_num}
+	</update>
+	
 </mapper>
 
 

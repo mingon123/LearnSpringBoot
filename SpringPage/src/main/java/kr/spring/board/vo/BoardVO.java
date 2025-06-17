@@ -25,13 +25,13 @@ public class BoardVO {
 	private String content;
 	private int hit;
 	private Date reg_date;
-	private Date modify_Date;
+	private Date modify_date;
 	private MultipartFile upload;
 	private String filename;
 	private String ip;
 	private long mem_num;
 	
-	private MemberVO member;
+	private MemberVO memberVO;
 	
 	// 숫자 형태의 category 값을 문자열로 변환
 	public String getCategoryName() {

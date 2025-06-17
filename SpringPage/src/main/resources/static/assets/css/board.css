@@ -21,6 +21,54 @@ form#board_register input[type="text"], form#board_modfy input[type="text"]{
 	margin-bottom: 10px;
 }
 
+/* 게시판 상세
+-----------------------*/
+ul.detail-info{
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+ul.detail-info li{
+	margin: 0;
+	padding-top: 5px;
+	display: inline-block;
+}
+ul.detail-info li.resp-pro{
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}ul.detail-info li:last-child{
+	vertical-align: top;
+}
+.detail-img{
+	max-width: 500px;
+}
+.detail-content img{
+	max-width: 940px;
+}
+#output_fav, .output-fav{
+	cursor: pointer;
+}
+#output_fcount{
+	width: 50px;
+	display: inline-block;
+}
+div#reply_div{
+	padding: 5px 10px 40px 10px;
+	margin-top: 10px;
+	background-color: #eee;
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 
