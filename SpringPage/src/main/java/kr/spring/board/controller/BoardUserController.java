@@ -164,4 +164,77 @@ public class BoardUserController {
 		
 		return "views/board/boardModify";
 	}
+	
+	// 게시글 수정
+	@PreAuthorize("isAuthenticated()")
+	@PostMapping("/update")
+	public String submitUpdate(@Valid BoardVO boardVO, 
+					BindingResult result, 
+					HttpServletRequest request, 
+					Model model,
+					@AuthenticationPrincipal PrincipalDetails principal) 
+								throws IllegalStateException, IOException {
+		log.debug("<<글 수정>> : {}", boardVO);
+		
+		BoardVO db_board = boardService.selectBoard(boardVO.getBoard_num());
+		// 로그인한 회원번호와 작성자 회원번호 일치 여부 체크
+		if(principal.getMemberVO().getMem_num() != db_board.getMem_num()) {
+			return "views/common/accessDenied";
+		}
+		
+		// 유효성 체크 결과 오류가 있으면 폼 호출
+		if(result.hasErrors()) {
+			// 유효성 체크 결과 오류 필드 출력
+			ValidationUtil.printErrorFields(result);
+			// title 또는 content가 입력되지 않아 유효성 체크에 걸리면 파일 정보를 잃어버리기 때문에 폼을 호출할 때 파일을 다시 셋팅
+			boardVO.setFilename(db_board.getFilename());
+			return "views/board/boardModify";
+		}
+		
+		// 파일명 셋팅
+		boardVO.setFilename(FileUtil.createFile(request, boardVO.getUpload()));
+		// ip셋팅
+		boardVO.setIp(request.getRemoteAddr());
+		
+		// 글 수정
+		boardService.updateBoard(boardVO);
+		
+		if(boardVO.getUpload()!=null && !boardVO.getUpload().isEmpty()) {
+			// 수정전 파일 삭제 처리
+			FileUtil.removeFile(request, db_board.getFilename());
+		}
+		
+		// View에 표시할 메시지
+		model.addAttribute("message", "글 수정 완료");
+		model.addAttribute("url", request.getContextPath()+"/board/detail?board_num="+boardVO.getBoard_num());
+		
+		return "views/common/resultAlert";
+	}
+	
+	// 게시글 삭제
+	@PreAuthorize("isAuthenticated()")
+	@GetMapping("/delete")
+	public String submitDelete(long board_num, 
+				HttpServletRequest request,
+				@AuthenticationPrincipal PrincipalDetails principal) {
+		log.debug("<<게시글 삭제>> board_num : {}", board_num);
+		
+		BoardVO db_board = boardService.selectBoard(board_num);
+		// 로그인한 회원번호와 작성자 회원번호 일치 여부 체크
+		if(principal.getMemberVO().getMem_num() != db_board.getMem_num()) {
+			return "views/common/accessDenied";
+		}
+		
+		// 글 삭제
+		boardService.deleteBoard(board_num);
+		
+		if(db_board.getFilename() != null) {
+			// 파일 삭제
+			FileUtil.removeFile(request, db_board.getFilename());
+		}
+		return "redirect:/board/list";
+	}
+	
+	
+	
 }

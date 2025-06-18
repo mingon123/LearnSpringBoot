@@ -20,6 +20,11 @@
 		
 		// 파일 용량 체크
 		$('#board_register').submit(function(){
+			// summernote 사용시
+			if($('#content').val()=='<p><br></p>'){
+				$('#content').val('');
+			}
+			
 			const fileSize = 1024*1024;
 			const myFile = $('#upload')[0].files[0];
 			if(myFile && myFile.size > fileSize){

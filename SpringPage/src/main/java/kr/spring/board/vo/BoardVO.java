@@ -4,17 +4,17 @@ import java.sql.Date;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import groovy.transform.ToString;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import kr.spring.member.vo.MemberVO;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
 // summernote 사용시만 content 제외
-@ToString(excludes = {"content"})
+@ToString(exclude = {"content"})
 public class BoardVO {
 	private long board_num;
 	@NotBlank

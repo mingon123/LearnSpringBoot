@@ -45,10 +45,10 @@
 				)}">
 		<img th:src="@{/assets/upload/{filename}(filename=${board.filename})}" class="detail-img">
 	</div>
-	<p class="detail-content" th:utext="${board.content}">
+	<p class="detail-content" th:utext="${board.content}"><!-- 내용은 utext로 해야 읽어올 수 있음. -->
 	<div>
 		<!-- 좋아요 -->
-		<img id="output_fav" th:attr="date-num=${board.board_num}" th:src="@{/assets/images/fav01.gif}" width="40">
+		<img id="output_fav" th:attr="data-num=${board.board_num}" th:src="@{/assets/images/fav01.gif}" width="40">
 		<span id="output_fcount"></span>
 		<!-- 댓글수 -->
 		<span id="output_rcount"></span>
