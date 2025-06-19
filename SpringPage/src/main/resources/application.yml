@@ -55,8 +55,5 @@ server:
       charset: UTF-8
       enabled: true
       force: true
-  tomcat:
-    max-http-form-post-size: 50MB #톰캣에서 허용하는 파일 업로드 사이즈(multipart 용량 지정을 해도 톰캣 영역에서 용량 제한이 되기 때문에 설정 필요)
-    max-swallow-size: 50MB #명시하지 않으면 ERR_CONNECTION_RESET 오류 발생
 
 

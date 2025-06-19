@@ -70,11 +70,11 @@
 		<tr th:each="board : ${list}">
 			<td class="align-center" th:text="${board.board_num}"></td>
 			<td class="align-center" th:text="${board.categoryName}"></td>
-			<td><a th:href="@{/board/detail(board_num=${board.board_num})}">[[${board.title}]]()</a></td>
+			<td><a th:href="@{/board/detail(board_num=${board.board_num})}">[[${board.title}]]([[${board.re_cnt}]])</a></td>
 			<td class="align-center" th:text="${board.memberVO.userName}"></td>
 			<td class="align-center" th:text="${board.reg_date}"></td>
 			<td class="align-center" th:text="${board.hit}"></td>
-			<td class="align-center"></td>
+			<td class="align-center" th:text="${board.fav_cnt}"></td>
 		</tr>
 	</table>
 	<div class="align-center" th:utext="${page}"></div>

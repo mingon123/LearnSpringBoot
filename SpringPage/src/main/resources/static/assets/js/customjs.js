@@ -59,3 +59,26 @@ function customInitImage(fileInput,imgSrc){
 	$(fileInput).attr('data-path',$(imgSrc).attr('src'));
 	$(fileInput).val('');
 }
+
+/* ========================================================================
+ * 폼에 입력한 데이터를 객체에 key와 value의 쌍으로 저장하는 메서드
+ * ======================================================================== */
+jQuery.fn.serializeObject = function() {
+    let obj = null;
+    try {
+        if (this[0].tagName && this[0].tagName.toUpperCase() == "FORM") {
+            let arr = this.serializeArray();
+            if (arr) {
+                obj = {};
+                jQuery.each(arr, function() {
+                    obj[this.name] = this.value;
+                });
+            }//if ( arr ) {
+        }
+    } catch (e) {
+        alert(e.message);
+    } finally {
+    }
+ 
+    return obj;
+};

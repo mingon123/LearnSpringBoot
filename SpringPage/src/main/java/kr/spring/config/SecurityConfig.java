@@ -31,16 +31,10 @@ import lombok.extern.slf4j.Slf4j;
 // Controller 메서드 레벨에서 권한을 체크할 수 있도록 설정.
 // @PreAuthorize 사용시 추가
 @EnableMethodSecurity
-// final 필드와 @NonNull 필드에 대해 생성자를 자동 생성(lombok 라이브러리)
-@RequiredArgsConstructor
 public class SecurityConfig {
 	// 쿠키에 사용되는 값을 암호화하기 위한 키(key)값
 	@Value("${dataconfig.rememberme-key}")
 	private String rememberme_key;
-	
-	// 파일의 최대 업로드 사이즈
-	@Value("${spring.servlet.multipart.max-file-size}")
-	private String max_file_size;
 	
 	// DB연동을 위한 DataSource 지정
 	@Autowired

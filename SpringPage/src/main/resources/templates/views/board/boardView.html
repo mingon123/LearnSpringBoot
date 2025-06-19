@@ -70,6 +70,35 @@
 		</th:block>
 		<input type="button" value="목록" onclick="location.href='list'">
 	</div>
+	<hr size="1" width="100%">
+	<!-- 댓글 UI 시작 -->
+	<div id="reply_div">
+		<span class="re_title">댓글 달기</span>
+		<form id="re_form">
+			<input type="hidden" th:field="${board.board_num}">
+			<textarea rows="3" cols="50" name="re_content" id="re_content" class="rep-content" 
+			th:disabled="${#authorization.expression('!isAuthenticated()')}"
+			><th:block sec:authorize="!isAuthenticated()">로그인해야 작성할 수 있습니다.</th:block></textarea>
+			<th:block th:if="${#authorization.expression('isAuthenticated()')}">
+			<div id="re_first">
+				<span class="letter-count">300/300</span>
+			</div>
+			<div id="re_second" class="align-right">
+				<input type="submit" value="전송">
+			</div>
+			</th:block>
+		</form>
+	</div>
+	<!-- 댓글 목록 출력 시작 -->
+	<div id="output"></div>
+	<div id="loading" style="display:none;">
+		<img th:src="@{/assets/images/loading.gif}" width="300" height="300">
+	</div>
+	<div class="paging-button" style="display:none;">
+		<input type="button" value="더보기">
+	</div>
+	<!-- 댓글 목록 출력 끝 -->
+	<!-- 댓글 UI 끝 -->
 </div>
 </body>
 </html>

@@ -36,4 +36,9 @@ public class MainController {
 	public String access() {
 		return "views/common/accessDenied";
 	}
+	
+	@GetMapping("/fileSizeLimit")
+	public String fileSizeLimit() {
+		return "views/common/fileSizeLimit";
+	}
 }

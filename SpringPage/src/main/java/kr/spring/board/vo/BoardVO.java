@@ -31,6 +31,9 @@ public class BoardVO {
 	private String ip;
 	private long mem_num;
 	
+	private int re_cnt; // 댓글 개수
+	private int fav_cnt; // 좋아요 개수
+	
 	private MemberVO memberVO;
 	
 	// 숫자 형태의 category 값을 문자열로 변환
