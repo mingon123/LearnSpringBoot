@@ -42,9 +42,13 @@ public interface BoardMapper {
 	
 	// 댓글
 	public List<BoardReplyVO> selectListReply(Map<String,Object> map);
+	@Select("SELECT COUNT(*) FROM spboard_reply WHERE board_num=#{board_num}")
 	public Integer selectRowCountReply(Map<String,Object> map);
 	public void insertReply(BoardReplyVO boardReply);
+	// 댓글 수정,삭제시 작성자 회원번호를 구하기 위해 사용
+	@Select("SELECT * FROM spboard_reply WHERE re_num=#{re_num}")
 	public BoardReplyVO selectReply(Long re_num);
+	@Update("UPDATE spboard_reply SET re_content=#{re_content},re_ip=#{re_ip},re_mdate=SYSDATE WHERE re_num=#{re_num}")
 	public void updateReply(BoardReplyVO boardReply);
 	public void deleteReply(Long re_num);
 	public void deleteReplyByBoardNum(Long board_num);

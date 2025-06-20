@@ -114,7 +114,6 @@ div#resp_second{
 	width: 26%;
 	margin-bottom: 10px;
 }
-
 div#loading{
 	width: 100%;
 	height: 50px;
@@ -122,9 +121,53 @@ div#loading{
 	justify-content: center;
 	align-items: center;
 }
-
-
-
-
-
+.modify-btn,.delete-btn,.resp-modify-btn,.resp-delete-btn,
+ .response-btn,.response2-btn,.paging-button input{
+	padding: 4px 20px;
+	border: 1px solid #f0f2f1;
+	border-radius: 20px;
+	color: #6e6e6e;
+	background-color: #f0f2f1;
+	font-weight: bold;
+	cursor: pointer;
+}
+.modify-btn:hover,.delete-btn:hover,.resp-modify-btn:hover,.resp-delete-btn:hover,
+ .response-btn:hover,.response2-btn:hover,.paging-button input:hover{
+ 	background-color: #e1e3e2;
+ 	color: #000;
+ 	transition: 0.2s ease-out;
+ 	height: 30px;
+}
+.rescontent-btn{
+	width: 300px;
+	margin: 10px 10px 0 10px;
+	padding: 4px 20px;
+	border: 1px solid #f0f2f1;
+	border-radius: 20px;
+	color: #6e6e6e;
+	background-color: #f0f2f1;
+	font-weight: bold;
+	cursor: pointer;
+}
+.rescontent-btn:hover{
+	background-color: #e1e3e2;
+	color: #000;
+	transition: 0.2s ease-out;
+	height: 30px;
+}
+div.paging-button{
+	text-align: right
+}
+div#output{
+	clear: both;
+}
+div.item{
+	margin-top: 10px;
+}
+div.sub-item{
+	margin-top: 10px;
+	border-left: 2px solid #e1e3e2;
+	margin-left: 20px;
+	padding-left: 10px;
+}
 
