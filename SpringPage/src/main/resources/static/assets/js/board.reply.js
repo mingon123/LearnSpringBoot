@@ -77,7 +77,7 @@ $(function(){
 								</li>
 							</ul>
 							<div class="sub-item">
-								<p>${item.re_content}</p>
+								<p>${customBrNoHtml(item.re_content)}</p>
 								${renderLike(item,user_num)}
 								${renderButtons(item,user_num)}
 							</div>
@@ -88,7 +88,11 @@ $(function(){
 	}
 	// 좋아요 표시
 	function renderLike(item,user_num){
-		return '별점';
+		let isLiked = item.click_num != 0 && item.click_num == user_num;
+		let heartSrc = isLiked ? 'heart02.png' : 'heart01.png';
+		
+		return `<img class="output-rfav" src="../assets/images/${heartSrc}" data-num="${item.re_num}">
+				<span class="output-rfcount">${item.refav_cnt}</span>`;
 	}
 	// 버튼 표시
 	function renderButtons(item,user_num){
@@ -205,6 +209,14 @@ $(function(){
 		$(this).parent().hide(); // 원래 내용(sub-item) 감춤
 		// 수정 폼 삽입
 		$(this).parents('.item').append(modifyFormHTML);
+		
+		// 입력한 글자수 셋팅
+		let inputLength = $('#mre_content').val().length;
+		let remain = 300 - inputLength;
+		remain += '/300';
+		
+		// 문서 객체에 반영
+		$('#mre_first .letter-count').text(remain);
 	});
 	// 수정폼에서 취소 버튼 클릭시 수정 폼 초기화
 	$(document).on('click','.re-reset',initModifyForm);
@@ -241,10 +253,12 @@ $(function(){
 			},
 			success:function(param){
 				if(param.result == 'logout'){
-					alert('로그인해야 작성할 수 있습니다.')
+					alert('로그인해야 작성할 수 있습니다.');
 				}else if(param.result == 'success'){
-					resetReplyForm();
-					fetchReplyList(1);
+					const container = $('#mre_form').parent();
+					container.find('p').html(customBrNoHtml($('#mre_content').val()));
+					container.find('.modify-date').text('최근 수정일 : 5초미만');
+					initModifyForm();
 				}else if(param.result == 'wrongAccess'){
 					alert('타인의 글을 수정할 수 없습니다');
 				}else{
@@ -264,6 +278,113 @@ $(function(){
 		});
 		
 	});
+	
+	/*==============================
+	 댓글(답글) 등록, 수정 공통
+	===============================*/
+	// textarea에 내용 입력시 글자수 체크
+	$(document).on('keyup','textarea',function(){
+		let inputLength = $(this).val().length;
+		if(inputLength > 300){
+			$(this).val($(this).val().substring(0,300));
+		}
+
+		const remain = `${300 - inputLength}/300`;
+		const id = $(this).attr('id');
+		
+		if(id == 're_content'){
+			$('#re_first .letter-count').text(remain);
+		}else if(id == 'mre_content'){
+			$('#mre_first .letter-count').text(remain);
+		}else if(id == 'resp_content'){
+			$('#resp_first .letter-count').text(remain);
+		}else{
+			$('#mresp_first .letter-count').text(remain);
+		}
+	});
+	
+	/*==============================
+	 댓글 삭제
+	===============================*/
+	$(document).on('click','.delete-btn',function(){
+		let re_num = $(this).attr('data-num');
+		// 서버와 통신
+		$.ajax({
+			url:'deleteReply/' + re_num,
+			type:'delete',
+			dataType:'json',
+			beforeSend:function(xhr){
+				xhr.setRequestHeader(
+					$('meta[name="csrf-header"]').attr('content'),
+					$('meta[name="csrf-token"]').attr('content'));				
+			},
+			success:function(param){
+				if(param.result == 'logout'){
+					alert('로그인해야 삭제할 수 있습니다.');
+				}else if(param.result == 'success'){
+					alert('삭제 완료!');
+					fetchReplyList(1);
+				}else if(param.result == 'wrongAccess'){
+					alert('타인의 글을 삭제할 수 없습니다.');
+				}else{
+					alert('댓글 삭제 오류 발생');
+				}
+			},
+			error:function(xhr){
+				try{
+					const responseJson = JSON.parse(xhr.responseText);
+					alert(responseJson.message);
+				}catch(e){
+					// JSON이 아닐 경우 대비
+					alert('네트워크 오류 발생');
+				}
+				console.error('Error:',xhr.status,xhr.responseText);
+			}
+		});
+	});
+	
+	/*==============================
+	 댓글 좋아요 등록/삭제
+	===============================*/
+	$(document).on('click','.output-rfav',function(){
+		const heart = $(this);
+		
+		// 서버와 통신
+		$.ajax({
+			url:'writeReFav',
+			type:'post',
+			data:JSON.stringify({re_num:heart.attr('data-num')}),
+			contentType:'application/json;charset=utf-8',
+			dataType:'json',
+			beforeSend:function(xhr){
+				xhr.setRequestHeader(
+					$('meta[name="csrf-header"]').attr('content'),
+					$('meta[name="csrf-token"]').attr('content'));				
+			},
+			success:function(param){
+				if(param.result == 'logout'){
+					alert('로그인 후 좋아요를 눌러주세요!');
+				}else if(param.result == 'success'){
+					let newImg = param.status == 'noFav' ? 'heart01.png' : 'heart02.png';
+					heart.attr('src',`../assets/images/${newImg}`);
+					heart.siblings('.output-rfcount').text(param.count);
+				}else{
+					alert('댓글 좋아요 등록/삭제 오류');
+				}
+			},
+			error:function(xhr){
+				try{
+					const responseJson = JSON.parse(xhr.responseText);
+					alert(responseJson.message);
+				}catch(e){
+					// JSON이 아닐 경우 대비
+					alert('네트워크 오류 발생');
+				}
+				console.error('Error:',xhr.status,xhr.responseText);
+			}
+		})
+	});
+	
 	
 	/*==============================
 	 초기 데이터(목록) 호출

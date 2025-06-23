@@ -1,6 +1,5 @@
 package kr.spring.board.controller;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -8,7 +7,6 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.servlet.http.HttpServletRequest;
 import kr.spring.board.service.BoardService;
 import kr.spring.board.vo.BoardFavVO;
+import kr.spring.board.vo.BoardReFavVO;
 import kr.spring.board.vo.BoardReplyVO;
 import kr.spring.board.vo.BoardVO;
 import kr.spring.member.vo.PrincipalDetails;
@@ -206,5 +205,60 @@ public class BoardRestController {
 		}
 		return new ResponseEntity<Map<String,String>>(mapAjax,HttpStatus.OK);
 	}
+	
+	// 댓글 삭제
+	@DeleteMapping("/deleteReply/{re_num}")
+	public ResponseEntity<Map<String, String>> deleteReply(
+			@PathVariable long re_num,
+			@AuthenticationPrincipal PrincipalDetails principal){
+		log.debug("<<댓글 삭제>> re_num : {}",re_num);
+		
+		Map<String, String> mapAjax = new HashMap<String, String>();
+		BoardReplyVO db_reply = boardService.selectReply(re_num);
+		if(principal==null) {
+			mapAjax.put("result", "logout");
+		}else if(principal.getMemberVO().getMem_num()==db_reply.getMem_num()) {
+			// 로그인한 회원번호와 작성자 회원번호 일치
+			boardService.deleteReply(re_num);
+			mapAjax.put("result", "success");
+		}else {
+			// 로그인한 회원번호와 작성자 회원번호 불일치
+			mapAjax.put("result", "wrongAccess");
+		}
+		return new ResponseEntity<Map<String,String>>(mapAjax,HttpStatus.OK);		
+	}
+	
+	// 댓글 좋아요 등록/삭제
+	@PostMapping("/writeReFav")
+	public ResponseEntity<Map<String,Object>> writeReFav(
+			@RequestBody BoardReFavVO fav,
+			@AuthenticationPrincipal PrincipalDetails principal){
+		log.debug("<<댓글 좋아요 등록/삭제>> : {}",fav);
+		
+		Map<String,Object> mapAjax = new HashMap<String, Object>();
+		
+		if(principal == null) {
+			mapAjax.put("result", "logout");
+		}else {
+			// 로그인된 회원번호 셋팅
+			fav.setMem_num(principal.getMemberVO().getMem_num());
+			
+			BoardReFavVO boardReFav = boardService.selectReFav(fav);
+			
+			if(boardReFav!=null) {
+				boardService.deleteReFav(fav);
+				mapAjax.put("status", "noFav");
+			}else {
+				boardService.insertReFav(fav);
+				mapAjax.put("status", "yesFav");
+			}
+			mapAjax.put("result", "success");
+			mapAjax.put("count", boardService.selectReFavCount(fav.getRe_num()));
+		}
+		return new ResponseEntity<Map<String,Object>>(mapAjax,HttpStatus.OK);
+	}
+	
+	
+	
 	
 }

@@ -161,18 +161,12 @@
 				a.*,
 				rownum rnum
 			FROM (SELECT
-					re_num,
-					<![CDATA[
-					REPLACE(REPLACE(re_content,'<','&lt;'),'>','&gt;') re_content,
-					]]>
-					re_date,
-					re_mdate,
-					board_num,
-					mem_num,
-					id,
-					nick_name
+					*
 				FROM spboard_reply
 				JOIN spmember USING(mem_num)
+				/*로그인 한 상태에서 클릭한 사람의 정보 읽기, 로그인하지 않으면 0 전달*/
+				LEFT OUTER JOIN (SELECT re_num,mem_num click_num FROM spreply_fav WHERE mem_num=#{mem_num}) USING (re_num)
+				LEFT OUTER JOIN (SELECT re_num, COUNT(*) refav_cnt FROM spreply_fav GROUP BY re_num) USING (re_num)
 				WHERE board_num=#{board_num}
 				ORDER BY re_num DESC)a)
 		<![CDATA[

@@ -72,5 +72,22 @@ create table spboard_reply(
 );
 create sequence spreply_seq;
 
+--게시판 댓글 좋아요
+create table spreply_fav(
+ re_num number not null,
+ mem_num number not null,
+ constraint refav_spreply_fk1 foreign key(re_num) references spboard_reply (re_num),
+ constraint refav_spreply_fk2 foreign key(mem_num) references spmember (mem_num)
+);
+
+--답글(대댓글)
+create table spboard_reponse(
+ te_num number not null,
+ te_content varchar2(900) not null,
+ te_date date default sysdate not null,
+ te_mdate date,
+ te_parent_num number not null, --부모글 번호가 들어감, 자식글이 아니라 부모글일 경우 0
+ 
+);
 
 

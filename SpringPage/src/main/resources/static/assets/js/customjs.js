@@ -86,3 +86,30 @@ jQuery.fn.serializeObject = function() {
 /*======================================
  HTML 태그를 허용하지 않으면서 줄바꿈
 =======================================*/
+function customBrNoHtml(str){
+	return str.replace(/</g,'&lt;')
+			  .replace(/>/g,'&gt;')
+			  .replace(/\r\n/g,'<br>')
+			  .replace(/\r/g,'<br>')
+			  .replace(/\n/g,'<br>');
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
