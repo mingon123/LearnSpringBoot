@@ -10,6 +10,7 @@ import org.apache.ibatis.annotations.Select;
 import kr.spring.board.vo.BoardFavVO;
 import kr.spring.board.vo.BoardReFavVO;
 import kr.spring.board.vo.BoardReplyVO;
+import kr.spring.board.vo.BoardResponseVO;
 import kr.spring.board.vo.BoardVO;
 
 public interface BoardService {
@@ -42,4 +43,13 @@ public interface BoardService {
 	public Integer selectReFavCount(Long re_num);
 	public void insertReFav(BoardReFavVO fav);
 	public void deleteReFav(BoardReFavVO fav);
+	
+	//답글(대댓글)
+	public List<BoardResponseVO> selectListResponse(Long re_num);
+	public BoardResponseVO selectResponse(Long te_num);
+	public void insertResponse(BoardResponseVO boardResponse);
+	public void updateResponse(BoardResponseVO boardResponse);
+	public void deleteResponse(Long te_num);
+	//답글 개수 표시를 위해서 사용
+	public Integer selectResponseCount(Long re_num);
 }

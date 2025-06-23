@@ -23,6 +23,7 @@ import kr.spring.board.service.BoardService;
 import kr.spring.board.vo.BoardFavVO;
 import kr.spring.board.vo.BoardReFavVO;
 import kr.spring.board.vo.BoardReplyVO;
+import kr.spring.board.vo.BoardResponseVO;
 import kr.spring.board.vo.BoardVO;
 import kr.spring.member.vo.PrincipalDetails;
 import kr.spring.util.FileUtil;
@@ -258,7 +259,45 @@ public class BoardRestController {
 		return new ResponseEntity<Map<String,Object>>(mapAjax,HttpStatus.OK);
 	}
 	
+	//답글 등록
+	@PostMapping("/writeResponse")
+	public ResponseEntity<Map<String,String>> writeResponse(
+			@RequestBody BoardResponseVO boardResponseVO,
+	        @AuthenticationPrincipal PrincipalDetails principal,
+	        HttpServletRequest request){
+		log.debug("<<답글 등록>> : {}",boardResponseVO);
+		
+		Map<String,String> mapAjax = new HashMap<String,String>();
+		
+		if(principal==null) {
+			mapAjax.put("result", "logout");
+		}else {
+			//회원번호 저장
+			boardResponseVO.setMem_num(principal.getMemberVO().getMem_num());
+			//ip 저장
+			boardResponseVO.setTe_ip(request.getRemoteAddr());
+			//답글 등록
+			boardService.insertResponse(boardResponseVO);
+			mapAjax.put("result", "success");
+		}		
+		return new ResponseEntity<Map<String,String>>(mapAjax,HttpStatus.OK);
+	}
 	
+	//답글 목록
+	@GetMapping("/listResp/{re_num}")
+	public ResponseEntity<Map<String,Object>> getListResp(
+	        @PathVariable long re_num,
+	        @AuthenticationPrincipal PrincipalDetails principal){
+		log.debug("<<답글 목록>> re_num : {}",re_num);
+		List<BoardResponseVO> list = boardService.selectListResponse(re_num);
+		
+		Map<String,Object> mapAjax = new HashMap<String,Object>();
+		mapAjax.put("list", list);
+		if(principal!=null) {
+			mapAjax.put("user_num", principal.getMemberVO().getMem_num());
+		}	
+		return new ResponseEntity<Map<String,Object>>(mapAjax,HttpStatus.OK);
+	}
 	
 	
 }

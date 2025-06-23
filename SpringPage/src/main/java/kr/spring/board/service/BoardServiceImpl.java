@@ -11,6 +11,7 @@ import kr.spring.board.dao.BoardMapper;
 import kr.spring.board.vo.BoardFavVO;
 import kr.spring.board.vo.BoardReFavVO;
 import kr.spring.board.vo.BoardReplyVO;
+import kr.spring.board.vo.BoardResponseVO;
 import kr.spring.board.vo.BoardVO;
 
 @Service
@@ -138,6 +139,39 @@ public class BoardServiceImpl implements BoardService{
 	@Override
 	public void deleteReFav(BoardReFavVO fav) {
 		boardMapper.deleteReFav(fav);
+	}
+
+	@Override
+	public List<BoardResponseVO> selectListResponse(Long re_num) {
+		return boardMapper.selectListResponse(re_num);
+	}
+
+	@Override
+	public BoardResponseVO selectResponse(Long te_num) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void insertResponse(BoardResponseVO boardResponse) {
+		boardMapper.insertResponse(boardResponse);
+	}
+
+	@Override
+	public void updateResponse(BoardResponseVO boardResponse) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void deleteResponse(Long te_num) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Integer selectResponseCount(Long re_num) {
+		return boardMapper.selectResponseCount(re_num);
 	}
 
 }

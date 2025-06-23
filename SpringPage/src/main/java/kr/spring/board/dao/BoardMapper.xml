@@ -11,6 +11,12 @@
 		<result property="memberVO.id" column="id"/>
 		<result property="memberVO.nick_name" column="nick_name"/>
 	</resultMap>
+	<resultMap type="boardResponseVO" id="boardResponseMap">
+		<result property="memberVO.id" column="id"/>
+		<result property="memberVO.nick_name" column="nick_name"/>
+		<result property="memberVO.parent_id" column="parent_id"/>
+		<result property="memberVO.pnick_name" column="pnick_name"/>
+	</resultMap>
 	
 	<!-- 게시판 글 등록 -->
 	<insert id="insertBoard" parameterType="boardVO">
@@ -172,6 +178,50 @@
 		<![CDATA[
 		WHERE rnum >= #{start} AND rnum <= #{end}
 		]]>
+	</select>
+	
+	<!-- 답글 등록 -->
+	<insert id="insertResponse" parameterType="boardResponseVO">
+		INSERT INTO spboard_response(
+		  te_num,
+		  te_content,
+		  te_parent_num,
+		  te_depth,
+		  te_ip,
+		  re_num,
+		  mem_num)
+		VALUES (
+		  response_seq.nextval,
+		  #{te_content},
+		  #{te_parent_num},
+		  #{te_depth},
+		  #{te_ip},
+		  #{re_num},
+		  #{mem_num})  
+	</insert>
+	
+	<!-- 답글 목록 -->
+	<select id="selectListResponse" parameterType="long" resultMap="boardResponseMap">
+		SELECT
+		   r.te_num,
+		   r.te_content,
+		   r.mem_num,
+		   a.id,
+		   a.nick_name,
+		   r.te_date,
+		   r.te_mdate,
+		   r.re_num,
+		   r.te_depth,
+		   r.te_parent_num,
+		   m.id parent_id,
+		   m.nick_name pnick_name
+		FROM spboard_response r
+		JOIN spmember a ON r.mem_num=a.mem_num
+		LEFT OUTER JOIN spboard_response s ON r.te_parent_num=s.te_num
+		LEFT OUTER JOIN spmember m ON s.mem_num=m.mem_num
+		WHERE r.re_num=#{re_num}
+		START WITH r.te_depth=0 CONNECT BY PRIOR r.te_num=r.te_parent_num
+		ORDER SIBLINGS BY r.te_num DESC   
 	</select>
 </mapper>
 

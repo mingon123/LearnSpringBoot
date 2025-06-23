@@ -81,13 +81,19 @@ create table spreply_fav(
 );
 
 --답글(대댓글)
-create table spboard_reponse(
+create table spboard_response(
  te_num number not null,
  te_content varchar2(900) not null,
  te_date date default sysdate not null,
  te_mdate date,
  te_parent_num number not null, --부모글 번호가 들어감, 자식글이 아니라 부모글일 경우 0
- 
+ te_depth number not null,--자식글의 깊이. 부모글의 자식글A 1, 자식글A의 자시글B 2, 부모글일 경우 0
+ te_ip varchar2(40) not null,
+ re_num number not null,
+ mem_num number not null,
+ constraint spboard_res_pk primary key (te_num),
+ constraint spboard_res_fk1 foreign key (re_num) references spboard_reply (re_num),
+ constraint spboard_res_fk2 foreign key (mem_num) references spmember (mem_num)
 );
-
+create sequence response_seq;
 

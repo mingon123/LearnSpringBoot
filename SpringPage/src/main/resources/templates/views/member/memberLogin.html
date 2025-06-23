@@ -19,7 +19,6 @@
 	<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
 	*/-->
 	<form th:action="@{login}" id="member_login" method="post">
-		
 		<div class="align-center error-invalid error-color" th:if="${error == 'error'}">아이디 또는 비밀번호 불일치</div>
 		<div class="align-center error-invalid error-color" th:if="${error == 'error_suspended'}">정지회원입니다</div>
 		<ul>

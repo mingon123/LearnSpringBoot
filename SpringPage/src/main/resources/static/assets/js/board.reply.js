@@ -385,6 +385,172 @@ $(function(){
 		})
 	});
 	
+	/*==============================
+	 * 답글 등록
+	 *==============================*/	
+	//답글 작성 버튼 클릭시 답글 작성 폼 노출
+	$(document).on('click','.response-btn, .response2-btn',function(){
+		initResponseForm();//기존 폼 제거
+		$(this).hide();//현재 클릭된 버튼만 숨김
+		
+		let re_num = $(this).attr('data-num');
+		let te_parent_num = $(this).attr('data-parent');
+		let te_depth = $(this).attr('data-depth');
+		console.log(re_num + ',' + te_parent_num 
+			                     + ',' + te_depth);
+		let responseUI = `
+			<form id="resp_form">
+				<input type="hidden" name="re_num" id="resp_num" value="${re_num}">
+				<input type="hidden" name="te_parent_num" value="${te_parent_num}">
+				<input type="hidden" name="te_depth" value="${te_depth}">
+				<textarea rows="3" cols="50" name="te_content" id="resp_content" class="rep-content"></textarea>
+				<div id="resp_first"><span class="letter-count">300/300</span></div> 					 
+				<div id="resp_second" class="align-right">
+					<input type="submit" value="답글 작성">
+					<input type="button" value="취소" class="resp-reset">
+				</div>
+			</form>
+		`;	
+		$(this).after(responseUI);					 
+	});
+	//답글에서 취소 버큰 클릭시 답글 폼 초기화
+	$(document).on('click','.resp-reset',initResponseForm);
+
+	//답글 작성 폼 초기화
+	function initResponseForm(){
+		$('.response-btn, .response2-btn').show();
+		$('#resp_form').remove();
+	}
+	//답글 등록
+	$(document).on('submit','#resp_form',function(event){
+		//기본 이벤트 제거
+		event.preventDefault();
+		const resp_form = $(this);
+		
+		if($('#resp_content').val().trim()==''){
+			alert('내용을 입력하세요!');
+			$('#resp_content').val('').focus();
+			return
+		}
+		
+		const form_data = $(this).serializeObject();
+		const re_num = $('#resp_num').val();
+		//서버와 통신
+		$.ajax({
+			url:'writeResponse',
+			type:'post',
+			data:JSON.stringify(form_data),
+			contentType:'application/json;charset=utf-8',
+			dataType:'json',
+			beforeSend:function(xhr){
+				xhr.setRequestHeader(
+						$('meta[name="csrf-header"]').attr('content'),
+						$('meta[name="csrf-token"]').attr('content'));
+			},
+			success:function(param){
+				if(param.result == 'logout'){
+					alert('로그인해야 답글을 작성할 수 있습니다.');
+				}else if(param.result == 'success'){
+					const btnContainer = resp_form.parents('.sub-item').find('div .rescontent-btn');
+					//답글 개수 업데이트
+					btnContainer.show();
+					btnContainer.attr('data-status',1);
+					const newCount = Number(btnContainer.val().substring(5)) + 1;
+					btnContainer.val(`▼ 답글 ${newCount}`);
+					
+					//답글 목록 새로고침
+					getListResponse(re_num, resp_form.parents('.sub-item'));
+					initResponseForm();
+				}else{
+					alert('답글 작성 오류 발생');
+				}
+			},
+			error:function(xhr){
+				try{
+					const responseJson = JSON.parse(xhr.responseText);
+					alert(responseJson.message);
+				}catch(e){
+					//JSON이 아닐 경우 대비
+					alert('네트워크 오류 발생');
+				}
+				console.error('Error:',xhr.status,xhr.responseText);
+			}
+		});
+		
+	});
+
+	//답글 노출/숨김 버튼 이벤트 처리
+	$(document).on('click','.rescontent-btn',function(){
+		//data-status의 값이 0이면 답글 미표시 상태 1이면 답글 표시 상태
+		if($(this).attr('data-status') == 0){
+			//0이면 답글 미표시 상태이므로 답글이 있으면 답글을 표시
+			let re_num = $(this).attr('data-num');
+			//답글 목록 호출
+			getListResponse(re_num,$(this).parent());
+			//현재 선택한 내용의 답글 표시 아이콘 토글 처리
+			$(this).val($(this).val().replace('▲','▼'));
+			$(this).attr('data-status',1);
+		}else{
+			//현재 선택한 내용의 답글 표시 아이콘 토글 처리
+			$(this).val($(this).val().replace('▼','▲'));
+			$(this).attr('data-status',0);
+			//현재 선택한 내용 삭제
+			$(this).parents('.item').find('.respitem').remove();
+		}
+	});	
+
+	/*==============================
+	 * 답글 목록
+	 *==============================*/		
+	function getListResponse(re_num,responseUI){
+		//서버와 통신
+		$.ajax({
+			url:'listResp/' + re_num,
+			type:'get',
+			dataType:'json',
+			success:function(param){
+				responseUI.find('.respitem').remove();
+				
+				let output = '';
+				$(param.list).each(function(index,item){
+					let sign_depth = '▶'.repeat(item.te_depth);
+					let sign_nick = item.te_parent_num > 0 ?
+					 `${sign_depth} ${item.memberVO.parentName}` : '';
+					 
+					output += `
+						<div class="respitem">
+							<ul class="detail-info">
+								<li class="resp-pro">
+									<b>${sign_nick}</b>
+									<img src="../member/viewProfile?mem_num=${item.mem_num}" width="30" height="30" class="my-photo">
+									<div>
+										${item.memberVO.userName}<br>
+										<span class="modify-date">${item.te_mdate}</span>
+									</div>	
+								</li>
+							</ul>
+							<div class="resp-sub-item">
+								<p>${customBrNoHtml(item.te_content)}</p>
+								${param.user_num}
+								${param.user_num}
+							</div>
+						</div>
+					`; 
+				});				
+				responseUI.append(output);				
+			},
+			error:function(xhr){
+				try{
+					const responseJson = JSON.parse(xhr.responseText);
+					alert(responseJson.message);
+				}catch(e){
+					//JSON이 아닐 경우 대비
+					alert('네트워크 오류 발생');
+				}
+				console.error('Error:',xhr.status,xhr.responseText);
+			}
+		});
+	}
 	
 	/*==============================
 	 초기 데이터(목록) 호출
