@@ -173,6 +173,7 @@
 				/*로그인 한 상태에서 클릭한 사람의 정보 읽기, 로그인하지 않으면 0 전달*/
 				LEFT OUTER JOIN (SELECT re_num,mem_num click_num FROM spreply_fav WHERE mem_num=#{mem_num}) USING (re_num)
 				LEFT OUTER JOIN (SELECT re_num, COUNT(*) refav_cnt FROM spreply_fav GROUP BY re_num) USING (re_num)
+				LEFT OUTER JOIN (SELECT re_num, COUNT(*) resp_cnt FROM spboard_response GROUP BY re_num) USING(re_num)
 				WHERE board_num=#{board_num}
 				ORDER BY re_num DESC)a)
 		<![CDATA[
@@ -221,8 +222,17 @@
 		LEFT OUTER JOIN spmember m ON s.mem_num=m.mem_num
 		WHERE r.re_num=#{re_num}
 		START WITH r.te_depth=0 CONNECT BY PRIOR r.te_num=r.te_parent_num
-		ORDER SIBLINGS BY r.te_num DESC   
+		ORDER SIBLINGS BY r.te_num DESC
 	</select>
+	
+	<!-- 답글 삭제 -->
+	<delete id="deleteResponse" parameterType="long">
+		DELETE FROM spboard_response WHERE te_num IN(
+			SELECT te_num
+			FROM spboard_response
+			START WITH te_num = #{te_num}
+			CONNECT BY PRIOR te_num = te_parent_num)
+	</delete>
 </mapper>
 
 

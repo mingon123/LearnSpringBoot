@@ -114,7 +114,7 @@ $(function(){
 		if(item.resp_cnt > 0){
 			buttons += `
 					<div>
-						<input type="button" data-status="0" data-num="${item.re_num}" value="▲답글 ${item.resp+cnt}" class="rescontent-btn">
+						<input type="button" data-status="0" data-num="${item.re_num}" value="▲답글 ${item.resp_cnt}" class="rescontent-btn">
 					</div>
 			`
 		}else{
@@ -525,14 +525,23 @@ $(function(){
 									<img src="../member/viewProfile?mem_num=${item.mem_num}" width="30" height="30" class="my-photo">
 									<div>
 										${item.memberVO.userName}<br>
-										<span class="modify-date">${item.te_mdate}</span>
+										<span class="modify-date">${item.te_mdate ? `최근 수정일 : ${item.te_mdate}` : `등록일 : ${item.te_date}`}</span>
 									</div>	
 								</li>
 							</ul>
 							<div class="resp-sub-item">
 								<p>${customBrNoHtml(item.te_content)}</p>
-								${param.user_num}
-								${param.user_num}
+								${param.user_num == item.mem_num 
+								  ? `<input type="button" data-num="${item.te_num}" data-mem="${item.mem_num}" value="수정" class="resp-modify-btn">
+									   <input type="button" data-num="${item.te_num}" data-rnum="${item.re_num}" data-mem="${item.mem_num}" value="삭제" class="resp-delete-btn">
+									`
+								  : ''
+								}
+								${param.user_num
+								  ? `<input type="button" data-num="${item.re_num}" data-parent="${item.te_num}" data-depth="${item.te_depth + 1}" value="답글 작성" class="response2-btn">
+									`
+								  : ''
+								}
 							</div>
 						</div>
 					`; 
@@ -551,6 +560,149 @@ $(function(){
 			}
 		});
 	}
+	
+	/*==============================
+	 답글 수정
+	===============================*/
+	// 답글 수정 버튼 클릭시 수정폼 노출
+	$(document).on('click','.resp-modify-btn',function(){
+		initResponseModifyForm();
+		
+		let te_num = $(this).attr('data-num');
+		let content = $(this).parent().find('p').html().replace(/<br>/gi,'\r\n'); // g : 문자 전체, i : 대소문자 구분X
+		let modifyUI = `
+			<form id="mresp_form">
+				<input type="hidden" name="te_num" id="mresp_num" value="${te_num}">
+				<textarea rows="3" cols="50" name="te_content" id="mresp_content" class="rep-content">${content}</textarea>
+				<div id="mresp_first">
+					<span class="letter-count">300/300</span>
+				</div>
+				<div id="mresp_second" class="align-right">
+					<input type="submit" value="수정">
+					<input type="button" value="취소" class="mresp-reset">
+				</div>
+				<hr size="1" noshade width="96%">
+			</form>
+		`;
+		
+		$(this).parent().hide(); // 기존 내용 숨기기
+		$(this).parents('.respitem').append(modifyUI);
+		
+		// 글자수 갱신
+		let inputLength = $('#mresp_content').val().length;
+		$('#mresp_first .letter-count').text(`${300 - inputLength}/300`);
+	});
+	
+	// 답글 수정폼 초기화
+	function initResponseModifyForm(){
+		$('.resp-sub-item').show();
+		$('#mresp_form').remove();
+	}
+	
+	// 답글 수정 취소 버튼 클릭시 수정폼 초기화
+	$(document).on('click','.mresp-reset',initResponseModifyForm);
+	
+	// 답글 수정
+	$(document).on('submit','#mresp_form',function(event){
+		// 기본 이벤트 제거
+		event.preventDefault();
+		
+		if($('#mresp_content').val().trim()==''){
+			alert('내용을 입력하세요');
+			$('#mresp_content').val('').focus();
+		}
+		
+		const form_data = $(this).serializeObject();
+		// 서버와 통신
+		$.ajax({
+			url:'updateResponse',
+			type:'put',
+			data:JSON.stringify(form_data),
+			contentType:'application/json;charset=utf-8',
+			dataType:'json',
+			beforeSend:function(xhr){
+				xhr.setRequestHeader(
+						$('meta[name="csrf-header"]').attr('content'),
+						$('meta[name="csrf-token"]').attr('content'));
+			},
+			success:function(param){
+				if(param.result == 'logout'){
+					alert('로그인해야 답글을 작성할 수 있습니다.');
+				}else if(param.result == 'success'){
+					$('#mresp_form').parent().find('p').html(customBrNoHtml($('#mresp_content').val()));
+					$('#mresp_form').parent().find('.modify-date').text('최근 수정일 : 5초미만');
+					initResponseModifyForm();
+				}else if(param.result == 'wrongAccess'){
+					alert('타인의 글은 수정할 수 없습니다.')
+				}else{
+					alert('답글 작성 오류 발생');
+				}
+			},
+			error:function(xhr){
+				try{
+					const responseJson = JSON.parse(xhr.responseText);
+					alert(responseJson.message);
+				}catch(e){
+					//JSON이 아닐 경우 대비
+					alert('네트워크 오류 발생');
+				}
+				console.error('Error:',xhr.status,xhr.responseText);
+			}
+		});
+	});
+	
+	
+	/*==============================
+	 답글 삭제
+	===============================*/
+	$(document).on('click','.resp-delete-btn',function(){
+		let re_num = $(this).attr('data-rnum');
+		let te_num = $(this).attr('data-num');
+		let mem_num = $(this).attr('data-mem');
+		const $btn = $(this); // 객체임을 나타내기 위해 $btn으로 작성
+		
+		// 서버와 통신
+		$.ajax({
+			url:`deleteResponse/${te_num}/${mem_num}`,
+			type:'delete',
+			dataType:'json',
+			beforeSend:function(xhr){
+				xhr.setRequestHeader(
+						$('meta[name="csrf-header"]').attr('content'),
+						$('meta[name="csrf-token"]').attr('content'));
+			},
+			success:function(param){
+				if(param.result == 'logout'){
+					alert('로그인해야 삭제할 수 있습니다.');
+				}else if(param.result == 'success'){
+					alert('삭제 완료!');
+					const $target = $btn.parents('.sub-item').find('div .rescontent-btn');
+					$target.val(`▼답글 ${param.cnt}`);
+					if(param.cnt > 0){
+						getListResponse(re_num,$btn.parents('.sub-item'));
+					}else{
+						$target.hide();
+						$('.respitem').remove();
+					}
+				}else if(param.result == 'wrongAccess'){
+					alert('타인의 글을 삭제할 수 없습니다');
+				}else{
+					alert('답글 삭제 오류 발생');
+				}
+			},
+			error:function(xhr){
+				try{
+					const responseJson = JSON.parse(xhr.responseText);
+					alert(responseJson.message);
+				}catch(e){
+					//JSON이 아닐 경우 대비
+					alert('네트워크 오류 발생');
+				}
+				console.error('Error:',xhr.status,xhr.responseText);
+			}
+		});
+	});
+	
 	
 	/*==============================
 	 초기 데이터(목록) 호출

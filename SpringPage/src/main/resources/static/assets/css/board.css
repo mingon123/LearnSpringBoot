@@ -104,15 +104,15 @@ div#re_second,div#mre_second,div#mresp_second{
 	margin-bottom: 10px;
 }
 div#resp_first{
-	float: left;
-	width: 70%;
-	padding-left: 15px;
-	margin-bottom: 10px;
+	float:left;
+	width:70%;
+	padding-left:15px;
+	margin-bottom:10px;
 }
 div#resp_second{
-	float: left;
-	width: 26%;
-	margin-bottom: 10px;
+	float:left;
+	width:26%;
+	margin-bottom:10px;
 }
 div#loading{
 	width: 100%;
@@ -170,4 +170,15 @@ div.sub-item{
 	margin-left: 20px;
 	padding-left: 10px;
 }
-
+div.respitem{
+	margin-top: 10px;
+	padding-left: 50px;
+}
+div.respitem .detail-info li b{
+	margin-left: 12px;
+}
+div.resp-sub-item{
+	border-left: 2px solid #e1e3e2;
+	margin-left: 16px;
+	padding-left: 10px;
+}

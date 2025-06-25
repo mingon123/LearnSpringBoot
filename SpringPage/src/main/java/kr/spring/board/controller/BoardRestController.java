@@ -299,5 +299,59 @@ public class BoardRestController {
 		return new ResponseEntity<Map<String,Object>>(mapAjax,HttpStatus.OK);
 	}
 	
+	// 답글 수정
+	@PutMapping("/updateResponse")
+	public ResponseEntity<Map<String, String>> modifyResponse(
+			@RequestBody BoardResponseVO boardResponseVO,
+			HttpServletRequest request,
+			@AuthenticationPrincipal PrincipalDetails principal){
+		log.debug("<<답글 수정>> : {}", boardResponseVO);
+		
+		Map<String,String> mapAjax = new HashMap<String, String>();
+		
+		BoardResponseVO db_response = boardService.selectResponse(boardResponseVO.getTe_num());
+		if(principal==null) {
+			mapAjax.put("result", "logout");
+		}else if(principal.getMemberVO().getMem_num()==db_response.getMem_num()) {
+			// 로그인 회원번호와 작성자 회원번호 일치
+			// ip 등록
+			boardResponseVO.setTe_ip(request.getRemoteAddr());
+			// 답글 수정
+			boardService.updateResponse(boardResponseVO);
+			mapAjax.put("result", "success");
+		}else {
+			// 로그인 회원번호와 작성자 회원번호 불일치
+			mapAjax.put("result", "wrongAccess");
+		}
+		return new ResponseEntity<Map<String,String>>(mapAjax,HttpStatus.OK);
+	}
+	
+	// 답글 삭제
+	@DeleteMapping("/deleteResponse/{te_num}/{mem_num}")
+	public ResponseEntity<Map<String, Object>> deleteResponse(
+			@PathVariable long te_num,
+			@PathVariable long mem_num,
+			@AuthenticationPrincipal PrincipalDetails principal){
+		log.debug("<<답글 삭제>> te_num : {}, mem_num : {}", te_num, mem_num);
+		Map<String,Object> mapAjax = new HashMap<String, Object>();
+		
+		if(principal==null) {
+			mapAjax.put("result", "loguot");
+		}else if(principal.getMemberVO().getMem_num()==mem_num) {
+			// 로그인 회원번호와 작성자 회원번호 일치
+			BoardResponseVO response = boardService.selectResponse(te_num);
+			boardService.deleteResponse(te_num);
+			int cnt = boardService.selectResponseCount(response.getRe_num());
+			log.debug("<<답글 삭제 후 나머지 답글 개수>> : {}", cnt);
+			
+			mapAjax.put("cnt", cnt);
+			mapAjax.put("result", "success");
+		}else {
+			// 로그인 회원번호와 작성자 회원번호 불일치
+			mapAjax.put("result", "wrongAccess");
+		}
+		return new ResponseEntity<Map<String,Object>>(mapAjax,HttpStatus.OK); 
+	}
+	
 	
 }

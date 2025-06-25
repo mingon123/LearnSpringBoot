@@ -48,6 +48,15 @@ public class MemberVO {
 	@Pattern(regexp="^[A-Za-z0-9]{4,12}$")
 	private String now_passwd;
 	
+	// 답글(대댓글) 작성시 부모글 아이디/별명
+	private String parent_id;
+	private String pnick_name;
+	
+	public String getParentName() {
+		if(pnick_name==null) return parent_id;
+		return pnick_name;
+	}
+	
 	// 별명이 미등록되 있으면 id 반환, 별명이 등록되어 있으면 별명 반환
 	public String getUserName() {
 		if(nick_name==null) return id;

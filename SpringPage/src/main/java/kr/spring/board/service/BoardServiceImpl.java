@@ -53,6 +53,8 @@ public class BoardServiceImpl implements BoardService{
 
 	@Override
 	public void deleteBoard(Long board_num) {
+		// 답글 삭제
+		boardMapper.deleteResponseByBoardNum(board_num);
 		// 댓글 좋아요 삭제
 		boardMapper.deleteReFavByBoardNum(board_num);
 		// 댓글 삭제
@@ -115,6 +117,8 @@ public class BoardServiceImpl implements BoardService{
 
 	@Override
 	public void deleteReply(Long re_num) {
+		// 답글 삭제
+		boardMapper.deleteResponseByReNum(re_num);
 		// 좋아요 삭제
 		boardMapper.deleteReFavByReNum(re_num);
 		// 댓글 삭제
@@ -148,8 +152,7 @@ public class BoardServiceImpl implements BoardService{
 
 	@Override
 	public BoardResponseVO selectResponse(Long te_num) {
-		// TODO Auto-generated method stub
-		return null;
+		return boardMapper.selectResponse(te_num);
 	}
 
 	@Override
@@ -159,14 +162,12 @@ public class BoardServiceImpl implements BoardService{
 
 	@Override
 	public void updateResponse(BoardResponseVO boardResponse) {
-		// TODO Auto-generated method stub
-		
+		boardMapper.updateResponse(boardResponse);
 	}
 
 	@Override
 	public void deleteResponse(Long te_num) {
-		// TODO Auto-generated method stub
-		
+		boardMapper.deleteResponse(te_num);
 	}
 
 	@Override

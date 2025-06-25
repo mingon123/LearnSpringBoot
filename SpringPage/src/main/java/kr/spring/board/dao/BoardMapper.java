@@ -73,15 +73,19 @@ public interface BoardMapper {
 	
 	//답글(대댓글)
 	public List<BoardResponseVO> selectListResponse(Long re_num);
+	@Select("SELECT * FROM spboard_response WHERE te_num=#{te_num}")
 	public BoardResponseVO selectResponse(Long te_num);
 	public void insertResponse(BoardResponseVO boardResponse);
+	@Update("UPDATE spboard_response SET te_content=#{te_content},te_ip=#{te_ip},te_mdate=SYSDATE WHERE te_num=#{te_num}")
 	public void updateResponse(BoardResponseVO boardResponse);
 	public void deleteResponse(Long te_num);
+	@Delete("DELETE FROM spboard_response WHERE re_num=#{re_num}")
 	public void deleteResponseByReNum(Long re_num);
 	//답글 개수 표시를 위해서 사용
 	@Select("SELECT COUNT(*) FROM spboard_response WHERE re_num=#{re_num}")
 	public Integer selectResponseCount(Long re_num);
 	//부모글 삭제시 댓글의 답글이 존재하면 댓글 번호를 구해서 답글 삭제
+	@Delete("DELETE FROM spboard_response WHERE re_num IN (SELECT re_num FROM spboard_reply WHERE board_num=#{board_num})")
 	public void deleteResponseByBoardNum(Long board_num);
 	
 }
