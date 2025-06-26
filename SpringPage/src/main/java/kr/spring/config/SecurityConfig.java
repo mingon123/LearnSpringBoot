@@ -90,6 +90,16 @@ public class SecurityConfig {
 			.exceptionHandling(error -> error
 					.accessDeniedHandler(customAccessDeniedHandler)
 			)
+			/*
+			자동로그인 사용시 사용하는 테이블 persistent_logins
+			series : 사용자의 로그인 세션을 식별하는 고유한 값
+			username : 로그인한 사용자 ID
+			token : 사용자의 브라우저에 저장되는 토큰 값(쿠키에 저장되는 암호화된 토큰 값)이 토큰을 통해 시스템은 사용자를 인증
+					매번 로그인이 유지될 때마다 갱신.
+					토큰이 일치하지 않으면 Remember-Me 세션이 무효화
+			last_used : 토큰이 마지막으로 사용된 시각.
+						토큰의 유효 시간을 관리하는데 사용
+			*/
 			// 자동로그인 기능
 			.rememberMe(me -> me
 					.key(rememberme_key) // 쿠키에 사용되는 값을 암호화하기 위한 키(key) 값

@@ -179,4 +179,39 @@ public class MemberUserController {
 		model.addAttribute("filename", "face.png");
 	}
 	
+	// 비밀번호 찾기
+	@GetMapping("/sendPassword")
+	public String sendPasswordForm() {
+		return "views/member/memberFindPassword";
+	}
+	
+	// 비밀번호 변경 폼
+	@PreAuthorize("isAuthenticated()")
+	@GetMapping("/changePassword")
+	public String formChangePassword() {
+		return "views/member/memberChangePassword";
+	}
+	
+	// 비밀번호 변경	
+	@PreAuthorize("isAuthenticated()")
+	@PostMapping("/changePassword")
+	public String submitChangePassword(@Valid MemberVO memberVO,
+			BindingResult result,
+			HttpServletRequest request,
+			@AuthenticationPrincipal PrincipalDetails principal) {
+		log.debug("<<비밀번호 변경>> : {}", memberVO);
+		
+		if(result.hasFieldErrors("now_passwd") ||
+				result.hasFieldErrors("passwd")) {
+			ValidationUtil.printErrorFields(result);
+			return formChangePassword();
+		}
+		
+		// 회원번호 저장
+		memberVO.setMem_num(principal.getMemberVO().getMem_num());
+		
+		
+		return "views/common/resultAlert";
+	}
+	
 }

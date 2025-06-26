@@ -47,8 +47,10 @@ public class MemberServiceImpl implements MemberService{
 
 	@Override
 	public void updatePassword(MemberVO member) {
-		// TODO Auto-generated method stub
-		
+		memberMapper.updatePassword(member);
+		// 설정되어 있는 자동로그인 기능 해제
+		// (모든 브라우저에 설정된 자동로그인 해제)
+		memberMapper.deleteRememberMe(member.getId());
 	}
 
 	@Override
@@ -59,8 +61,7 @@ public class MemberServiceImpl implements MemberService{
 
 	@Override
 	public void updateRandomPassword(MemberVO member) {
-		// TODO Auto-generated method stub
-		
+		memberMapper.updateRandomPassword(member);
 	}
 
 	@Override

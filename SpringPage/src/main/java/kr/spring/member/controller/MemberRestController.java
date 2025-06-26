@@ -6,18 +6,23 @@ import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import kr.spring.member.security.CustomAccessDeniedHandler;
+
+import kr.spring.member.email.Email;
+import kr.spring.member.email.EmailSender;
 import kr.spring.member.service.MemberService;
 import kr.spring.member.vo.MemberVO;
 import kr.spring.member.vo.PrincipalDetails;
+import kr.spring.member.vo.UserRole;
+import kr.spring.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -25,13 +30,14 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/member")
 public class MemberRestController {
 
-    private final CustomAccessDeniedHandler customAccessDeniedHandler;
-	@Autowired
+    @Autowired
 	private MemberService memberService;
-
-    MemberRestController(CustomAccessDeniedHandler customAccessDeniedHandler) {
-        this.customAccessDeniedHandler = customAccessDeniedHandler;
-    }
+    @Autowired
+    private EmailSender emailSender;
+    @Autowired
+    private Email email;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 	
 	// 아이디 중복 체크
 	@GetMapping("/confirmId/{id}")
@@ -105,5 +111,48 @@ public class MemberRestController {
 			mapAjax.put("result", "success");
 		}
 		return new ResponseEntity<Map<String,String>>(mapAjax,HttpStatus.OK);
+	}
+	
+	// 비밀번호 찾기  
+	@PutMapping("/getPasswordInfo")
+	public ResponseEntity<Map<String,String>> sendEmailAction(
+			@RequestBody MemberVO memberVO){
+		log.debug("<<비밀번호 찾기>> : {}", memberVO);
+		
+		Map<String,String> mapAjax = new HashMap<String, String>();
+		
+		MemberVO member = memberService.selectCheckMember(memberVO.getId());
+		if(member!=null && member.getAuthorityOrdinal()>1 && member.getEmail().equals(memberVO.getEmail())) { // 일반 회원
+			// 오류를 대비해서 원래 비밀번호 저장
+			String origin_passwd = member.getPasswd();
+			// 기존 비밀번호를 임시비밀번호로 변경
+			String passwd = StringUtil.randomPassword(10);
+			member.setPasswd(passwordEncoder.encode(passwd));
+			// 변경된 임시비밀번호를 DB에 저장
+			memberService.updateRandomPassword(member);
+			
+			email.setContent("임시 비밀번호는 " + passwd + " 입니다.");
+			email.setReceiver(member.getEmail());
+			email.setSubject(member.getId() + " 님 비밀번호 찾기 메일입니다.");
+			
+			log.debug("<<임시 비밀번호>> : {}", passwd);
+			
+			try {
+				emailSender.sendEmail(email);
+				mapAjax.put("result", "success");
+			} catch (Exception e) {
+				log.debug("<<복구 비밀번호>> : {}", origin_passwd);
+				log.error("<<비밀번호 찾기>> : {}", e.toString());
+				// 오류 발생시 비밀번호 원상 복구
+				member.setPasswd(origin_passwd);
+				memberService.updateRandomPassword(member);
+				mapAjax.put("result", "failure");
+			}
+		}else if(member!=null && member.getAuthorityOrdinal()==UserRole.SUSPENDED.ordinal()) { // 정지회원
+			mapAjax.put("result", "suspended");
+		}else {
+			mapAjax.put("result", "invalidInfo");
+		}
+		return new ResponseEntity<Map<String,String>>(mapAjax, HttpStatus.OK);
 	}
 }
