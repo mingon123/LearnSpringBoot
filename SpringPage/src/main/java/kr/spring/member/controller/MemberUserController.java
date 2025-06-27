@@ -261,8 +261,8 @@ public class MemberUserController {
 		
 		MemberVO db_member = memberService.selectMember(principal.getMemberVO().getMem_num());
 		// 비밀번호 일치 여부 체크
-		try {	
-			if(passwordEncoder.matches(memberVO.getPasswd(), db_member.getPasswd())) { // 일치
+		try {
+			if(memberVO.getId().equals(db_member.getId()) && passwordEncoder.matches(memberVO.getPasswd(), db_member.getPasswd())) { // 일치
 				// 인증 성공, 회원정보 삭제
 				memberService.deleteMember(principal.getMemberVO().getMem_num());
 				// 로그아웃
