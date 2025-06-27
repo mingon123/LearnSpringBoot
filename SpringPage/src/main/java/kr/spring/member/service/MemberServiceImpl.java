@@ -55,8 +55,12 @@ public class MemberServiceImpl implements MemberService{
 
 	@Override
 	public void deleteMember(Long mem_num) {
-		// TODO Auto-generated method stub
-		
+		MemberVO member = memberMapper.selectMember(mem_num);
+
+		memberMapper.deleteMember(mem_num);
+		memberMapper.deleteMemberDetail(mem_num);
+		// 설정되어 있는 자동로그인 기능 해제(모든 브라우저에 설정된 자동 로그인 해제)
+		memberMapper.deleteRememberMe(member.getId());
 	}
 
 	@Override

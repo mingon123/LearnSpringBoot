@@ -63,14 +63,6 @@ public class MemberVO {
 		return nick_name;
 	}
 	
-	// 비밀번호 일치 여부 체크
-	public boolean isCheckedPassword(String userPasswd) {
-		if(getAuthorityOrdinal() > 1 && passwd.equals(userPasswd)) {
-			return true;
-		}
-		return false;
-	}
-	
 	// 회원 등급 체크
 	public int getAuthorityOrdinal() {
 		if(authority == null) return -1;

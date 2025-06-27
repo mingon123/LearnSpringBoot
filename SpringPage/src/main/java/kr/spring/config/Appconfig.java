@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 
@@ -15,7 +15,7 @@ import kr.spring.websocket.SocketHandler;
 
 // 자바코드 기반 설정 클래스
 @Configuration
-@EnableWebSecurity
+@EnableWebSocket
 public class Appconfig implements WebMvcConfigurer, WebSocketConfigurer{
 
 	@Value("${dataconfig.google-mail-url}")

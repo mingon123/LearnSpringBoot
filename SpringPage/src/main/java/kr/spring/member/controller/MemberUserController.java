@@ -3,7 +3,9 @@ package kr.spring.member.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -13,11 +15,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import kr.spring.member.security.CustomAccessDeniedHandler;
 import kr.spring.member.service.MemberService;
 import kr.spring.member.vo.MemberVO;
 import kr.spring.member.vo.PrincipalDetails;
+import kr.spring.util.AuthCheckException;
 import kr.spring.util.FileUtil;
 import kr.spring.util.ValidationUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -198,11 +202,11 @@ public class MemberUserController {
 	public String submitChangePassword(@Valid MemberVO memberVO,
 			BindingResult result,
 			HttpServletRequest request,
-			@AuthenticationPrincipal PrincipalDetails principal) {
+			@AuthenticationPrincipal PrincipalDetails principal,
+			Model model) {
 		log.debug("<<비밀번호 변경>> : {}", memberVO);
 		
-		if(result.hasFieldErrors("now_passwd") ||
-				result.hasFieldErrors("passwd")) {
+		if(result.hasFieldErrors("now_passwd") || result.hasFieldErrors("passwd")) {
 			ValidationUtil.printErrorFields(result);
 			return formChangePassword();
 		}
@@ -210,8 +214,74 @@ public class MemberUserController {
 		// 회원번호 저장
 		memberVO.setMem_num(principal.getMemberVO().getMem_num());
 		
+		MemberVO db_member = memberService.selectMember(memberVO.getMem_num());
+		// 폼에서 전송한 현재 비밀번호와 DB에서 읽어온 비밀번호 일치 여부 체크
+		if(!passwordEncoder.matches(memberVO.getNow_passwd(), db_member.getPasswd())) {
+			result.rejectValue("now_passwd", "invalidPassword");
+			return formChangePassword();
+		}
+		
+		// 새비밀번호 암호화
+		memberVO.setPasswd(passwordEncoder.encode(memberVO.getPasswd()));
+		// 자동 로그인 해제를 위해 id가 필요
+		memberVO.setId(db_member.getId());
+		
+		// 비밀번호수정
+		memberService.updatePassword(memberVO);
+		
+		// View에 표시할 메시지
+		model.addAttribute("message", "비밀번호 변경 완료(*재접속시 설정되어 있는 자동로그인 기능 해제)");
+		model.addAttribute("url", request.getContextPath()+"/member/myPage");
 		
 		return "views/common/resultAlert";
 	}
+	
+	// 회원 탈퇴 폼
+	@PreAuthorize("isAuthenticated()")
+	@GetMapping("/delete")
+	public String formDelete() {
+		return "views/member/memberDelete";
+	}
+	
+	// 회원 탈퇴
+	@PreAuthorize("isAuthenticated()")
+	@PostMapping("/delete")
+	public String submitDelete(
+			@Valid MemberVO memberVO,BindingResult result,
+			@AuthenticationPrincipal PrincipalDetails principal,
+			HttpServletRequest request,	HttpServletResponse response,
+			Model model) {
+		log.debug("<<회원 탈퇴>> : {}", memberVO);
+		
+		// id,passwd 필드의 에러만 체크
+		if(result.hasFieldErrors("id") || result.hasFieldErrors("passwd")) {
+			ValidationUtil.printErrorFields(result);
+			return formDelete();
+		}
+		
+		MemberVO db_member = memberService.selectMember(principal.getMemberVO().getMem_num());
+		// 비밀번호 일치 여부 체크
+		try {	
+			if(passwordEncoder.matches(memberVO.getPasswd(), db_member.getPasswd())) { // 일치
+				// 인증 성공, 회원정보 삭제
+				memberService.deleteMember(principal.getMemberVO().getMem_num());
+				// 로그아웃
+				new SecurityContextLogoutHandler().logout(request, response, SecurityContextHolder.getContext().getAuthentication());
+				
+				model.addAttribute("accessTitle", "회원탈퇴");
+				model.addAttribute("accessMsg", "회원 탈퇴를 완료했습니다.");
+				model.addAttribute("accessBtn", "홈으로");
+				model.addAttribute("accessUrl", request.getContextPath()+"/main/main");
+
+				return "views/common/resultView";
+			}
+			// 인증 실패
+			throw new AuthCheckException();
+		}catch(AuthCheckException e) {
+			result.reject("invalidIdOrPassword"); // field가 없기 때문에 reject, 있으면 rejectValue
+			return formDelete();
+		}
+	}
+	
 	
 }

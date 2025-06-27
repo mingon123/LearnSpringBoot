@@ -28,7 +28,9 @@ public interface MemberMapper {
 	public void updateMemberDetail(MemberVO member);
 	@Update("UPDATE spmember_detail SET passwd=#{passwd} WHERE mem_num=#{mem_num}")
 	public void updatePassword(MemberVO member);
+	@Update("UPDATE spmember SET authority='ROLE_INACTIVE' WHERE mem_num=#{mem_num}")
 	public void deleteMember(Long mem_num);
+	@Delete("DELETE FROM spmember_detail WHERE mem_num=#{mem_num}")
 	public void deleteMemberDetail(Long mem_num);
 	// 자동 로그인 해제
 	@Delete("DELETE FROM persistent_logins WHERE username=#{id}")

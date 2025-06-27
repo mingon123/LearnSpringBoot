@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{layouts/layout_basic}">
+<head>
+<meta charset="UTF-8">
+<title>회원 탈퇴</title>
+<link rel="stylesheet" th:href="@{/assets/css/member.css}">
+</head>
+<body>
+<div layout:fragment="content" class="page-main">
+	<h2>회원 탈퇴</h2>
+	<form th:object="${memberVO}" id="member_delete" th:action="@{delete}" method="post">
+		<div th:if="${#fields.hasGlobalErrors()}" class="error-color">
+			<p th:each="err : ${#fields.globalErrors()}" th:text="${err}" class="align-center"></p>
+		</div>
+		<ul>
+			<li>
+				<label for="id">아이디</label>
+				<input type="text" th:field="*{id}" th:errorclass="field-color">
+				<span th:errors="*{id}" class="error-color"></span>
+			</li>
+			<li>
+				<label for="passwd">비밀번호</label>
+				<input type="password" th:field="*{passwd}" th:errorclass="field-color">
+				<span th:errors="*{passwd}" class="error-color"></span>
+			</li>
+		</ul>
+		<div class="align-center">
+			<input type="submit" value="전송">
+			<input type="button" value="MY페이지" th:onclick="location.href='myPage'">
+		</div>
+	</form>
+</div>
+</body>
+</html>

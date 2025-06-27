@@ -213,7 +213,7 @@
 		   r.te_mdate,
 		   r.re_num,
 		   r.te_depth,
-		   r.te_parent_num,
+		   r.te_parent_num, <!-- 삭제 및 계층 표현 등에 필요하기 때문에 부모 정보와 깊이를 알아야 함  -->
 		   m.id parent_id,
 		   m.nick_name pnick_name
 		FROM spboard_response r
